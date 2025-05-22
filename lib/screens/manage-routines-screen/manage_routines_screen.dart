@@ -2,7 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
 class ManageRoutinesScreen extends StatelessWidget {
-  const ManageRoutinesScreen({super.key});
+  ManageRoutinesScreen({super.key});
+
+  // Sample routine data
+  final List<Map<String, dynamic>> _routines = [
+    {
+      'name': 'Push Day',
+      'exercises': [
+        {'name': 'Bench Press', 'category': 'Chest', 'icon': Icons.fitness_center},
+        {'name': 'Overhead Press', 'category': 'Shoulders', 'icon': Icons.fitness_center},
+        {'name': 'Tricep Pushdowns', 'category': 'Triceps', 'icon': Icons.fitness_center},
+        {'name': 'Lateral Raises', 'category': 'Shoulders', 'icon': Icons.fitness_center},
+        {'name': 'Incline Bench Press', 'category': 'Chest', 'icon': Icons.fitness_center},
+        {'name': 'Skull Crushers', 'category': 'Triceps', 'icon': Icons.fitness_center},
+      ],
+    },
+    {
+      'name': 'Pull Day',
+      'exercises': [
+        {'name': 'Pull-ups', 'category': 'Back', 'icon': Icons.fitness_center},
+        {'name': 'Barbell Rows', 'category': 'Back', 'icon': Icons.fitness_center},
+        {'name': 'Bicep Curls', 'category': 'Biceps', 'icon': Icons.fitness_center},
+        {'name': 'Face Pulls', 'category': 'Shoulders', 'icon': Icons.fitness_center},
+        {'name': 'Lat Pulldowns', 'category': 'Back', 'icon': Icons.fitness_center},
+        {'name': 'Hammer Curls', 'category': 'Biceps', 'icon': Icons.fitness_center},
+        {'name': 'Seated Cable Rows', 'category': 'Back', 'icon': Icons.fitness_center},
+      ],
+    },
+    {
+      'name': 'Leg Day',
+      'exercises': [
+        {'name': 'Squats', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Romanian Deadlifts', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Leg Press', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Calf Raises', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Leg Extensions', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Leg Curls', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Walking Lunges', 'category': 'Legs', 'icon': Icons.fitness_center},
+      ],
+    },
+    {
+      'name': 'Full Body',
+      'exercises': [
+        {'name': 'Deadlifts', 'category': 'Full Body', 'icon': Icons.fitness_center},
+        {'name': 'Push-ups', 'category': 'Chest', 'icon': Icons.fitness_center},
+        {'name': 'Dumbbell Rows', 'category': 'Back', 'icon': Icons.fitness_center},
+        {'name': 'Shoulder Press', 'category': 'Shoulders', 'icon': Icons.fitness_center},
+        {'name': 'Goblet Squats', 'category': 'Legs', 'icon': Icons.fitness_center},
+        {'name': 'Plank', 'category': 'Core', 'icon': Icons.fitness_center},
+      ],
+    },
+    {
+      'name': 'Upper Body',
+      'exercises': [
+        {'name': 'Bench Press', 'category': 'Chest', 'icon': Icons.fitness_center},
+        {'name': 'Pull-ups', 'category': 'Back', 'icon': Icons.fitness_center},
+        {'name': 'Overhead Press', 'category': 'Shoulders', 'icon': Icons.fitness_center},
+        {'name': 'Barbell Rows', 'category': 'Back', 'icon': Icons.fitness_center},
+        {'name': 'Tricep Pushdowns', 'category': 'Triceps', 'icon': Icons.fitness_center},
+        {'name': 'Bicep Curls', 'category': 'Biceps', 'icon': Icons.fitness_center},
+        {'name': 'Lateral Raises', 'category': 'Shoulders', 'icon': Icons.fitness_center},
+      ],
+    },
+  ];
 
   void _showAddRoutineBottomSheet(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -152,79 +214,68 @@ class ManageRoutinesScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Text(
-                        'Push Day',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      _buildExerciseCard(
-                        context,
-                        'Exercise 1',
-                        'Chest',
-                        Icons.fitness_center,
-                        () {
-                          // TODO: Handle exercise tap
-                        },
-                        () {
-                          // TODO: Handle delete
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      _buildExerciseCard(
-                        context,
-                        'Exercise 2',
-                        'Chest',
-                        Icons.fitness_center,
-                        () {
-                          // TODO: Handle exercise tap
-                        },
-                        () {
-                          // TODO: Handle delete
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      _buildExerciseCard(
-                        context,
-                        'Exercise 3',
-                        'Chest',
-                        Icons.fitness_center,
-                        () {
-                          // TODO: Handle exercise tap
-                        },
-                        () {
-                          // TODO: Handle delete
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      _buildExerciseCard(
-                        context,
-                        'Exercise 4',
-                        'Triceps',
-                        Icons.fitness_center,
-                        () {
-                          // TODO: Handle exercise tap
-                        },
-                        () {
-                          // TODO: Handle delete
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      _buildExerciseCard(
-                        context,
-                        'Exercise 5',
-                        'Triceps',
-                        Icons.fitness_center,
-                        () {
-                          // TODO: Handle exercise tap
-                        },
-                        () {
-                          // TODO: Handle delete
-                        },
-                      ),
-                      const SizedBox(height: 20),
+                      ..._routines.map((routine) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                routine['name'],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      // TODO: Handle edit routine
+                                    },
+                                    icon: const Icon(Icons.edit, size: 20),
+                                    style: IconButton.styleFrom(
+                                      backgroundColor: Colors.blue.withOpacity(0.1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    onPressed: () {
+                                      // TODO: Handle delete routine
+                                    },
+                                    icon: const Icon(Icons.delete, size: 20),
+                                    style: IconButton.styleFrom(
+                                      backgroundColor: Colors.red.withOpacity(0.1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          ...routine['exercises'].map<Widget>((exercise) => Column(
+                            children: [
+                              _buildExerciseCard(
+                                context,
+                                exercise['name'],
+                                exercise['category'],
+                                exercise['icon'],
+                                () {
+                                  // TODO: Handle exercise tap
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          )).toList(),
+                          const SizedBox(height: 20),
+                        ],
+                      )).toList(),
                     ],
                   ),
                 ),
@@ -242,73 +293,85 @@ class ManageRoutinesScreen extends StatelessWidget {
     String category,
     IconData icon,
     VoidCallback onTap,
-    VoidCallback onDelete,
   ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Dismissible(
+      key: Key(title),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(
+          Icons.delete,
+          color: Colors.red,
+        ),
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).extension<AppTheme>()!.text.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  size: 32,
-                  color: Theme.of(context).extension<AppTheme>()!.text,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      category,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 40,
-                width: 40,
-                child: IconButton(
-                  onPressed: onDelete,
-                  icon: const Icon(
-                    Icons.delete,
-                    size: 20,
+      onDismissed: (direction) {
+        // TODO: Handle exercise deletion
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$title removed from routine'),
+            action: SnackBarAction(
+              label: 'UNDO',
+              onPressed: () {
+                // TODO: Handle undo deletion
+              },
+            ),
+          ),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).extension<AppTheme>()!.text.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.red.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  child: Icon(
+                    icon,
+                    size: 32,
+                    color: Theme.of(context).extension<AppTheme>()!.text,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        category,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

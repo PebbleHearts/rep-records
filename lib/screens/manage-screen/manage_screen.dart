@@ -45,7 +45,7 @@ class ManageScreen extends StatelessWidget {
                         'Plan your multi-day workout schedules',
                         Icons.calendar_today,
                         () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageRoutinesScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ManageRoutinesScreen()));
                         },
                       ),
                       const SizedBox(height: 20),
