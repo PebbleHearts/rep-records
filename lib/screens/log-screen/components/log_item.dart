@@ -7,62 +7,52 @@ class LogItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).extension<AppTheme>()!.background2,
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Exercise name',
-                  style: TextStyle(
-                    color: Theme.of(context).extension<AppTheme>()!.text,
-                      fontSize: 17, fontWeight: FontWeight.bold),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 6.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 35,
-                        width: 35,
-                        child: IconButton(
-                            onPressed: () => {},
-                            icon: const Icon(
-                              Icons.edit,
-                              size: 20,
-                            )),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      SizedBox(
-                        height: 35,
-                        width: 35,
-                        child: IconButton(
-                          onPressed: () => {},
-                          icon: const Icon(
-                            Icons.delete,
-                            size: 20,
-                          ),
-                        ),
+                      child: Icon(
+                        Icons.fitness_center,
+                        size: 21,
+                        color: Theme.of(context).extension<AppTheme>()!.text,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Exercise name',
+                      style: TextStyle(
+                        color: Theme.of(context).extension<AppTheme>()!.text,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          LogSetItem(),
-          LogSetItem(),
-          LogSetItem()
-        ],
+            const SizedBox(height: 10),
+            LogSetItem(),
+            LogSetItem(),
+            LogSetItem(),
+          ],
+        ),
       ),
     );
   }

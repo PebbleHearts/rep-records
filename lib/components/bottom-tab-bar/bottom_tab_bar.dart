@@ -14,8 +14,7 @@ class BottomTabBar extends StatelessWidget {
 
   final _tabs = [
     CustomBottomTabItem(icon: Icons.history, label: 'Log'),
-    CustomBottomTabItem(icon: Icons.category, label: 'Exercises'),
-    CustomBottomTabItem(icon: Icons.group_work, label: 'Routines'),
+    CustomBottomTabItem(icon: Icons.category, label: 'Manage'),
     CustomBottomTabItem(icon: Icons.person, label: 'Profile')
   ];
 

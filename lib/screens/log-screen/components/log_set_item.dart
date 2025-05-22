@@ -6,40 +6,50 @@ class LogSetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(flex: 1, child: Text('Set ${1}')),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "10 Kg",
-                      style: TextStyle(
-                        color: Theme.of(context).extension<AppTheme>()!.text,
-                      ),
-                    ),
-                    Text(
-                      "Reps: 10",
-                      style: TextStyle(
-                        color: Theme.of(context).extension<AppTheme>()!.text,
-                      ),
-                    ),
-                  ],
-                ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).extension<AppTheme>()!.background2,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Text(
+              'Set 1',
+              style: TextStyle(
+                color: Theme.of(context).extension<AppTheme>()!.text,
+                fontWeight: FontWeight.w500,
               ),
-            ],
+            ),
           ),
-        ),
-        if (true) Divider(height: 1, color: Theme.of(context).extension<AppTheme>()!.text.withAlpha(30),),
-      ],
+          Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "10 Kg",
+                  style: TextStyle(
+                    color: Theme.of(context).extension<AppTheme>()!.text,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  "Reps: 10",
+                  style: TextStyle(
+                    color: Theme.of(context).extension<AppTheme>()!.text,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
-    ;
   }
 }

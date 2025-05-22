@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rep_records/components/horizontal-date-selector/horizontal_date_selector.dart';
+import 'package:rep_records/screens/edit-log-screen/edit_log_screen.dart';
 import 'package:rep_records/screens/log-screen/components/log_item.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
@@ -10,6 +11,18 @@ class LogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).extension<AppTheme>()!.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        forceMaterialTransparency: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditLogScreen()));
+            },
+            icon: Icon(Icons.edit),
+          )
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [

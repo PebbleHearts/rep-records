@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rep_records/components/bottom-tab-bar/bottom_tab_bar.dart';
-import 'package:rep_records/screens/categories-screen/categories_screen.dart';
+import 'package:rep_records/screens/manage-routines-screen/manage_routines_screen.dart';
 import 'package:rep_records/screens/log-screen/log_screen.dart';
+import 'package:rep_records/screens/manage-screen/manage_screen.dart';
 import 'package:rep_records/screens/profile-screen/profile_screen.dart';
 class TabNavigator extends StatefulWidget {
   const TabNavigator({super.key});
@@ -15,8 +16,7 @@ class _TabNavigatorState extends State<TabNavigator> {
 
   final _pages = [
     const LogScreen(),
-    const CategoriesScreen(),
-    const Placeholder(child: Text('Routines screen'),),
+    const ManageScreen(),
     const ProfileScreen(),
   ];
 
