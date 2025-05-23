@@ -3,9 +3,20 @@ import 'package:provider/provider.dart';
 import 'package:rep_records/navigators/tab-navigator/tab_navigator.dart';
 import 'package:rep_records/providers/theme_provider.dart';
 import 'package:rep_records/theme/themes.dart';
+import 'package:rep_records/database/database.dart';
 
-void main() {
-  // runApp(const MyApp());
+late AppDatabase database;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  print('Initializing database...');
+  database = AppDatabase();
+  
+  print('Waiting for database to be ready...');
+  await database.beforeOpen;
+  print('Database is ready');
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
