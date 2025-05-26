@@ -1,4 +1,8 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import 'package:rep_records/database/dao/routine_dao.dart';
+import 'package:rep_records/database/database.dart';
+import 'package:rep_records/main.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
 class ManageRoutinesScreen extends StatelessWidget {
@@ -106,10 +110,18 @@ class ManageRoutinesScreen extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: Save the routine
-                        Navigator.pop(context);
+                        await RoutineDao(database).createRoutine(
+                          RoutinesCompanion.insert(
+                            name: _nameController.text,
+                            status: 'active',
+                          ),
+                        );
+                        print('Routine created');
+                        final routines = await RoutineDao(database).getAllRoutines();
+                        print(routines);
+                        // Navigator.pop(context);
                       }
                     },
                     child: const Text(
@@ -127,44 +139,19 @@ class ManageRoutinesScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Routine Name',
-                        hintText: 'e.g., Push Day, Upper Body, etc.',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a routine name';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Add Exercises',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: Show exercise selection dialog
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Exercise'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                    ),
-                  ],
+                child: TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Routine Name',
+                    hintText: 'e.g., Push Day, Upper Body, etc.',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a routine name';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ),
@@ -273,6 +260,23 @@ class ManageRoutinesScreen extends StatelessWidget {
                               const SizedBox(height: 10),
                             ],
                           )).toList(),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // TODO: Show exercise selection dialog for this specific routine
+                              },
+                              icon: const Icon(Icons.add),
+                              label: const Text('Add Exercise'),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 20),
                         ],
                       )).toList(),
