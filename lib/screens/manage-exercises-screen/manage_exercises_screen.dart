@@ -395,7 +395,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                             ...category.exercises.map((exercise) => Column(
                               children: [
                                 Dismissible(
-                                  key: Key(exercise.id),
+                                  key: Key('${exercise.id}'),
                                   direction: DismissDirection.endToStart,
                                   background: Container(
                                     alignment: Alignment.centerRight,

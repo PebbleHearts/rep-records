@@ -6,7 +6,7 @@ import 'package:rep_records/database/schema/exercise.dart';
 part 'category_dao.g.dart';
 
 class CategoryWithExercises {
-  final String categoryId;
+  final int categoryId;
   final String categoryName;
   final List<ExerciseData> exercises;
 
@@ -39,7 +39,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     ]);
 
     final rows = await query.get();
-    final Map<String, CategoryWithExercises> result = {};
+    final Map<int, CategoryWithExercises> result = {};
     
     for (final row in rows) {
       final categoryData = row.readTable(category);
@@ -67,7 +67,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     ]);
 
     return query.watch().map((rows) {
-      final Map<String, CategoryWithExercises> result = {};
+      final Map<int, CategoryWithExercises> result = {};
       
       for (final row in rows) {
         final categoryData = row.readTable(category);

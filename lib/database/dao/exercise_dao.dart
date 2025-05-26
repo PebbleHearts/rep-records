@@ -16,7 +16,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
     return select(exercise).get();
   }
 
-  Future<List<ExerciseData>> getExercisesByCategory(String categoryId) async {
+  Future<List<ExerciseData>> getExercisesByCategory(int categoryId) async {
     return (select(exercise)..where((t) => t.categoryId.equals(categoryId))).get();
   }
 
@@ -24,7 +24,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
     await into(exercise).insert(exerciseData);
   }
 
-  Future<void> deleteExercise(String id) async {
+  Future<void> deleteExercise(int id) async {
     await (delete(exercise)..where((t) => t.id.equals(id))).go();
   }
 
