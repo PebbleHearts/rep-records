@@ -5,7 +5,7 @@ import 'package:rep_records/database/dao/exercise_dao.dart';
 import 'package:rep_records/database/database.dart';
 import 'package:rep_records/main.dart';
 import 'package:rep_records/theme/app_theme.dart';
-import 'package:drift/drift.dart' show Value, Variable;
+import 'package:drift/drift.dart' show Value;
 import 'package:uuid/uuid.dart';
 
 class ExerciseItem {
@@ -450,8 +450,52 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                                       color: Colors.red,
                                     ),
                                   ),
-                                  onDismissed: (direction) {
-                                    // TODO: Handle exercise deletion
+                                  confirmDismiss: (direction) async {
+                                    return await showDialog<bool>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Delete Exercise'),
+                                          content: Text('Are you sure you want to delete "${exercise.name}"?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(true),
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: Colors.red,
+                                              ),
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ) ?? false;
+                                  },
+                                  onDismissed: (direction) async {
+                                    try {
+                                      await ExerciseDao(database).deleteExercise(exercise.id);
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('${exercise.name} deleted successfully'),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      print('Error deleting exercise: $e');
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Error deleting exercise: $e'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    }
                                   },
                                   child: ExerciseCard(
                                     name: exercise.name,
