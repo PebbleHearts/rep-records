@@ -33,6 +33,10 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     await into(category).insert(categoryData);
   }
 
+  Future<void> updateCategory(CategoryCompanion categoryData) async {
+    await (update(category)..where((t) => t.id.equals(categoryData.id.value))).write(categoryData);
+  }
+
   Future<List<CategoryWithExercises>> getCategoriesWithExercises() async {
     final query = select(category).join([
       leftOuterJoin(exercise, exercise.categoryId.equalsExp(category.id)),

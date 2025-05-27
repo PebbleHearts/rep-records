@@ -30,9 +30,9 @@ class ManageExercisesScreen extends StatefulWidget {
 class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
   final uuidInstance = Uuid();
 
-  void _showAddCategoryBottomSheet(BuildContext context) {
+  void _showAddCategoryBottomSheet(BuildContext context, {String? existingCategoryName, int? categoryId}) {
     final _formKey = GlobalKey<FormState>();
-    final _nameController = TextEditingController();
+    final _nameController = TextEditingController(text: existingCategoryName);
 
     showModalBottomSheet(
       context: context,
@@ -62,9 +62,9 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Add New Category',
-                    style: TextStyle(
+                  Text(
+                    existingCategoryName != null ? 'Edit Category' : 'Add New Category',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -72,12 +72,33 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                   TextButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await CategoryDao(database).insertCategory(
-                          CategoryCompanion.insert(
-                            name: _nameController.text,
-                          ),
-                        );
-                        Navigator.pop(context);
+                        try {
+                          if (existingCategoryName != null && categoryId != null) {
+                            // Update existing category
+                            await CategoryDao(database).updateCategory(
+                              CategoryCompanion(
+                                id: Value(categoryId),
+                                name: Value(_nameController.text),
+                              ),
+                            );
+                          } else {
+                            // Create new category
+                            await CategoryDao(database).insertCategory(
+                              CategoryCompanion.insert(
+                                name: _nameController.text,
+                              ),
+                            );
+                          }
+                          Navigator.pop(context);
+                        } catch (e) {
+                          print('Error ${existingCategoryName != null ? 'updating' : 'creating'} category: $e');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error ${existingCategoryName != null ? 'updating' : 'creating'} category: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       }
                     },
                     child: const Text(
@@ -123,7 +144,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
     );
   }
 
-  Widget _buildCategoryHeader(BuildContext context, String categoryName) {
+  Widget _buildCategoryHeader(BuildContext context, String categoryName, int categoryId) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(
@@ -143,7 +164,11 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                 width: 32,
                 child: IconButton(
                   onPressed: () {
-                    // TODO: Handle edit category
+                    _showAddCategoryBottomSheet(
+                      context,
+                      existingCategoryName: categoryName,
+                      categoryId: categoryId,
+                    );
                   },
                   icon: const Icon(
                     Icons.edit,
@@ -208,10 +233,14 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
     );
   }
 
-  void _showAddExerciseBottomSheet(BuildContext context, String categoryName) {
+  void _showAddExerciseBottomSheet(
+    BuildContext context,
+    String categoryName, {
+    ExerciseData? existingExercise,
+  }) {
     final _formKey = GlobalKey<FormState>();
-    final _nameController = TextEditingController();
-    final _equipmentController = TextEditingController();
+    final _nameController = TextEditingController(text: existingExercise?.name);
+    final _equipmentController = TextEditingController(text: existingExercise?.equipment);
 
     showModalBottomSheet(
       context: context,
@@ -242,7 +271,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Add Exercise to $categoryName',
+                    existingExercise != null ? 'Edit Exercise' : 'Add Exercise to $categoryName',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -252,27 +281,39 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          // Find the category ID based on the category name
-                          final categories = await CategoryDao(database).getAllCategories();
-                          final category = categories.firstWhere(
-                            (c) => c.name == categoryName,
-                            orElse: () => throw Exception('Category not found: $categoryName'),
-                          );
+                          if (existingExercise != null) {
+                            // Update existing exercise
+                            await ExerciseDao(database).updateExercise(
+                              ExerciseCompanion(
+                                id: Value(existingExercise.id),
+                                name: Value(_nameController.text),
+                                equipment: Value(_equipmentController.text),
+                                categoryId: Value(existingExercise.categoryId),
+                              ),
+                            );
+                          } else {
+                            // Find the category ID based on the category name
+                            final categories = await CategoryDao(database).getAllCategories();
+                            final category = categories.firstWhere(
+                              (c) => c.name == categoryName,
+                              orElse: () => throw Exception('Category not found: $categoryName'),
+                            );
 
-                          // Create the exercise
-                          await ExerciseDao(database).insertExercise(
-                            ExerciseCompanion.insert(
-                              name: _nameController.text,
-                              equipment: _equipmentController.text,
-                              categoryId: category.id,
-                            ),
-                          );
+                            // Create new exercise
+                            await ExerciseDao(database).insertExercise(
+                              ExerciseCompanion.insert(
+                                name: _nameController.text,
+                                equipment: _equipmentController.text,
+                                categoryId: category.id,
+                              ),
+                            );
+                          }
                           Navigator.pop(context);
                         } catch (e) {
-                          print('Error creating exercise: $e');
+                          print('Error ${existingExercise != null ? 'updating' : 'creating'} exercise: $e');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Error creating exercise: $e'),
+                              content: Text('Error ${existingExercise != null ? 'updating' : 'creating'} exercise: $e'),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -391,7 +432,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                             ),
                           ),
                           ...categories.expand((category) => [
-                            _buildCategoryHeader(context, category.categoryName),
+                            _buildCategoryHeader(context, category.categoryName, category.categoryId),
                             ...category.exercises.map((exercise) => Column(
                               children: [
                                 Dismissible(
@@ -416,7 +457,11 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                                     name: exercise.name,
                                     equipment: exercise.equipment,
                                     onTap: () {
-                                      _showAddExerciseBottomSheet(context, category.categoryName);
+                                      _showAddExerciseBottomSheet(
+                                        context,
+                                        category.categoryName,
+                                        existingExercise: exercise,
+                                      );
                                     },
                                     onDelete: () {},
                                     onEdit: () {},
