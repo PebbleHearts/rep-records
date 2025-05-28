@@ -36,6 +36,10 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
     await (delete(routines)..where((t) => t.id.equals(id))).go();
   }
 
+  Future<void> updateRoutine(int id, RoutinesCompanion routineData) async {
+    await (update(routines)..where((t) => t.id.equals(id))).write(routineData);
+  }
+
   Stream<List<RoutineWithExercises>> watchAllRoutinesWithExercises() {
     final query = select(routines).join([
       leftOuterJoin(

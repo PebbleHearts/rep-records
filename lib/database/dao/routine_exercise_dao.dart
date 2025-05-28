@@ -13,4 +13,10 @@ class RoutineExerciseDao extends DatabaseAccessor<AppDatabase> with _$RoutineExe
   
   Future<int> addExerciseToRoutine(RoutineExercisesCompanion exercise) =>
       into(routineExercises).insert(exercise);
+
+  Future<void> deleteExerciseFromRoutine(int routineId, int exerciseId) async {
+    await (delete(routineExercises)
+      ..where((t) => t.routineId.equals(routineId) & t.exerciseId.equals(exerciseId)))
+      .go();
+  }
 } 

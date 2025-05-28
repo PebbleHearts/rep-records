@@ -35,9 +35,9 @@ class ManageRoutinesScreen extends StatelessWidget {
     ],
   };
 
-  void _showAddRoutineBottomSheet(BuildContext context) {
+  void _showAddRoutineBottomSheet(BuildContext context, {Routine? routineToEdit}) {
     final _formKey = GlobalKey<FormState>();
-    final _nameController = TextEditingController();
+    final _nameController = TextEditingController(text: routineToEdit?.name);
 
     showModalBottomSheet(
       context: context,
@@ -67,9 +67,9 @@ class ManageRoutinesScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Add New Routine',
-                    style: TextStyle(
+                  Text(
+                    routineToEdit != null ? 'Edit Routine' : 'Add New Routine',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -77,12 +77,22 @@ class ManageRoutinesScreen extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await RoutineDao(database).createRoutine(
-                          RoutinesCompanion.insert(
-                            name: _nameController.text,
-                            status: 'active',
-                          ),
-                        );
+                        if (routineToEdit != null) {
+                          await RoutineDao(database).updateRoutine(
+                            routineToEdit.id,
+                            RoutinesCompanion(
+                              name: Value(_nameController.text),
+                              status: Value(routineToEdit.status),
+                            ),
+                          );
+                        } else {
+                          await RoutineDao(database).createRoutine(
+                            RoutinesCompanion.insert(
+                              name: _nameController.text,
+                              status: 'active',
+                            ),
+                          );
+                        }
                         Navigator.pop(context);
                       }
                     },
@@ -378,7 +388,10 @@ class ManageRoutinesScreen extends StatelessWidget {
                                       children: [
                                         IconButton(
                                           onPressed: () {
-                                            // TODO: Handle edit routine
+                                            _showAddRoutineBottomSheet(
+                                              context,
+                                              routineToEdit: routineWithExercises.routine,
+                                            );
                                           },
                                           icon: const Icon(Icons.edit, size: 20),
                                           style: IconButton.styleFrom(
@@ -391,7 +404,32 @@ class ManageRoutinesScreen extends StatelessWidget {
                                         const SizedBox(width: 8),
                                         IconButton(
                                           onPressed: () async {
-                                            await RoutineDao(database).deleteRoutine(routineWithExercises.routine.id);
+                                            final shouldDelete = await showDialog<bool>(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text('Confirm Deletion'),
+                                                  content: Text('Are you sure you want to delete the routine "${routineWithExercises.routine.name}"? This action cannot be undone.'),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () => Navigator.of(context).pop(false),
+                                                      child: const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.of(context).pop(true),
+                                                      style: TextButton.styleFrom(
+                                                        foregroundColor: Colors.red,
+                                                      ),
+                                                      child: const Text('Delete'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+
+                                            if (shouldDelete == true) {
+                                              await RoutineDao(database).deleteRoutine(routineWithExercises.routine.id);
+                                            }
                                           },
                                           icon: const Icon(Icons.delete, size: 20),
                                           style: IconButton.styleFrom(
@@ -409,10 +447,53 @@ class ManageRoutinesScreen extends StatelessWidget {
                                 // Show exercises for this routine
                                 ...routineWithExercises.exercises.map((exercise) => Column(
                                   children: [
-                                    _buildExerciseCard(
-                                      context,
-                                      exercise.name,
-                                      exercise.equipment,
+                                    Dismissible(
+                                      key: Key('${routineWithExercises.routine.id}-${exercise.id}'),
+                                      direction: DismissDirection.endToStart,
+                                      background: Container(
+                                        alignment: Alignment.centerRight,
+                                        padding: const EdgeInsets.only(right: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      confirmDismiss: (direction) async {
+                                        return await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Confirm Deletion'),
+                                              content: Text('Are you sure you want to remove ${exercise.name} from this routine?'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context).pop(false),
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context).pop(true),
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      onDismissed: (direction) async {
+                                        await RoutineExerciseDao(database).deleteExerciseFromRoutine(
+                                          routineWithExercises.routine.id,
+                                          exercise.id,
+                                        );
+                                      },
+                                      child: _buildExerciseCard(
+                                        context,
+                                        exercise.name,
+                                        exercise.equipment,
+                                      ),
                                     ),
                                     const SizedBox(height: 8),
                                   ],

@@ -187,8 +187,53 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                 height: 32,
                 width: 32,
                 child: IconButton(
-                  onPressed: () {
-                    // TODO: Handle delete category
+                  onPressed: () async {
+                    final shouldDelete = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Confirm Deletion'),
+                          content: Text('Are you sure you want to delete the category "$categoryName"? This will also delete all exercises in this category. This action cannot be undone.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (shouldDelete == true) {
+                      try {
+                        await CategoryDao(database).deleteCategory(categoryId);
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Category "$categoryName" deleted successfully'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        print('Error deleting category: $e');
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error deleting category: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    }
                   },
                   icon: const Icon(
                     Icons.delete,
