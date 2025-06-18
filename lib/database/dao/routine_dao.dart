@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:rep_records/database/database.dart';
-import 'package:rep_records/database/schema/routine.dart';
+import 'package:rep_records/database/schema/routine_schema.dart';
 import 'package:rep_records/database/schema/routine_exercise.dart';
 import 'package:rep_records/database/schema/exercise.dart';
 
@@ -38,6 +38,37 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
 
   Future<void> updateRoutine(int id, RoutinesCompanion routineData) async {
     await (update(routines)..where((t) => t.id.equals(id))).write(routineData);
+  }
+
+  Future<RoutineWithExercises?> getRoutineWithExercises(int routineId) async {
+    final query = select(routines).join([
+      leftOuterJoin(
+        routineExercises,
+        routineExercises.routineId.equalsExp(routines.id),
+      ),
+      leftOuterJoin(
+        exercise,
+        exercise.id.equalsExp(routineExercises.exerciseId),
+      ),
+    ])
+      ..where(routines.id.equals(routineId));
+
+    final rows = await query.get();
+    
+    if (rows.isEmpty) {
+      return null;
+    }
+
+    final routineData = rows.first.readTable(routines);
+    final exercises = rows
+        .map((row) => row.readTableOrNull(exercise))
+        .whereType<ExerciseData>()
+        .toList();
+
+    return RoutineWithExercises(
+      routine: routineData,
+      exercises: exercises,
+    );
   }
 
   Stream<List<RoutineWithExercises>> watchAllRoutinesWithExercises() {

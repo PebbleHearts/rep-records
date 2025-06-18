@@ -3,7 +3,14 @@ import 'package:rep_records/screens/log-screen/components/log_set_item.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
 class LogItem extends StatelessWidget {
-  const LogItem({super.key});
+  final String exerciseName;
+  final List<LogSet> sets;
+
+  const LogItem({
+    super.key,
+    required this.exerciseName,
+    required this.sets,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,7 @@ class LogItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      'Exercise name',
+                      exerciseName,
                       style: TextStyle(
                         color: Theme.of(context).extension<AppTheme>()!.text,
                         fontSize: 18,
@@ -48,12 +55,26 @@ class LogItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            LogSetItem(),
-            LogSetItem(),
-            LogSetItem(),
+            ...sets.map((set) => LogSetItem(
+              setNumber: set.setNumber,
+              weight: set.weight,
+              reps: set.reps,
+            )),
           ],
         ),
       ),
     );
   }
+}
+
+class LogSet {
+  final int setNumber;
+  final double weight;
+  final int reps;
+
+  const LogSet({
+    required this.setNumber,
+    required this.weight,
+    required this.reps,
+  });
 }

@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:rep_records/constants/common.dart';
 
 class Exercise extends Table {
   IntColumn get id => integer().autoIncrement()();

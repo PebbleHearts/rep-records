@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
 class LogSetItem extends StatelessWidget {
-  const LogSetItem({super.key});
+  final int setNumber;
+  final double weight;
+  final int reps;
+
+  const LogSetItem({
+    super.key,
+    required this.setNumber,
+    required this.weight,
+    required this.reps,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +28,7 @@ class LogSetItem extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Text(
-              'Set 1',
+              'Set $setNumber',
               style: TextStyle(
                 color: Theme.of(context).extension<AppTheme>()!.text,
                 fontWeight: FontWeight.w500,
@@ -32,14 +41,14 @@ class LogSetItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "10 Kg",
+                  "$weight Kg",
                   style: TextStyle(
                     color: Theme.of(context).extension<AppTheme>()!.text,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  "Reps: 10",
+                  "Reps: $reps",
                   style: TextStyle(
                     color: Theme.of(context).extension<AppTheme>()!.text,
                     fontWeight: FontWeight.w500,
