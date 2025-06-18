@@ -42,6 +42,37 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
+  Future<List<ExerciseLogData>> getLogsForDate(String date) async {
+    final query = select(exerciseLog)..where((t) => t.sessionDate.equals(date));
+    return query.get();
+  }
+
+  Future<void> updateLog(
+    int logId, {
+    required List<double?> weights,
+    required List<int?> reps,
+  }) async {
+    final log = await (select(exerciseLog)..where((t) => t.id.equals(logId))).getSingle();
+
+    print('updating log ${log.id} with weights $weights and reps $reps');
+    
+    final updatedSets = List.generate(3, (index) {
+      return SetData(
+        setNumber: index + 1,
+        weight: weights[index] ?? 0,
+        reps: reps[index] ?? 0,
+      );
+    });
+
+    final updatedLog = ExerciseLogCompanion(
+      id: Value(logId),
+      setsData: Value(ExerciseLogsSetData(sets: updatedSets)),
+      updatedAt: Value(DateTime.now()),
+    );
+
+    await (update(exerciseLog)..where((t) => t.id.equals(logId))).write(updatedLog);
+  }
+
   Future<void> createLogsForRoutine(int routineId, String date) async {
     print('inside createLogsForRoutine');
     final query = select(routines).join([

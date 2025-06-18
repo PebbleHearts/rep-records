@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
 class ExerciseCard extends StatelessWidget {
@@ -73,7 +74,10 @@ class ExerciseCard extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: weightControllers[index],
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+              ],
               decoration: InputDecoration(
                 hintText: 'Weight',
                 hintStyle: TextStyle(color: theme.text.withOpacity(0.5)),
@@ -93,6 +97,9 @@ class ExerciseCard extends StatelessWidget {
             child: TextField(
               controller: repsControllers[index],
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+              ],
               decoration: InputDecoration(
                 hintText: 'Reps',
                 hintStyle: TextStyle(color: theme.text.withOpacity(0.5)),

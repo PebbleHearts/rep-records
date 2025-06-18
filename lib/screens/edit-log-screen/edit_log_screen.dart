@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
 import 'package:rep_records/database/dao/routine_dao.dart';
+import 'package:rep_records/database/database.dart';
 import 'package:rep_records/main.dart';
 import 'package:rep_records/screens/edit-log-screen/components/exercise_card.dart';
 import 'package:rep_records/theme/app_theme.dart';
@@ -55,29 +56,54 @@ class _EditLogScreenState extends State<EditLogScreen> {
     super.dispose();
   }
 
-  void _initializeControllers(int exerciseId) {
+  void _initializeControllers(int exerciseId, ExerciseLogData? log) {
     if (!_weightControllers.containsKey(exerciseId)) {
       _weightControllers[exerciseId] = List.generate(
         3,
-        (index) => TextEditingController(),
+        (index) {
+          final controller = TextEditingController();
+          if (log != null && index < log.setsData.sets.length) {
+            final weight = log.setsData.sets[index].weight;
+            if (weight > 0) {
+              controller.text = weight.toString();
+            }
+          }
+          return controller;
+        },
       );
     }
     if (!_repsControllers.containsKey(exerciseId)) {
       _repsControllers[exerciseId] = List.generate(
         3,
-        (index) => TextEditingController(),
+        (index) {
+          final controller = TextEditingController();
+          if (log != null && index < log.setsData.sets.length) {
+            final reps = log.setsData.sets[index].reps;
+            if (reps > 0) {
+              controller.text = reps.toString();
+            }
+          }
+          return controller;
+        },
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).extension<AppTheme>()!;
     return Scaffold(
-      backgroundColor: Theme.of(context).extension<AppTheme>()!.background,
+      backgroundColor: theme.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         forceMaterialTransparency: true,
         title: Text('Edit Log - ${widget.date}'),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _saveLogs,
+        backgroundColor: theme.accent,
+        icon: const Icon(Icons.save),
+        label: const Text('Save'),
       ),
       body: StreamBuilder<List<ExerciseLogWithExercise>>(
         stream: _logsStream,
@@ -119,7 +145,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
                 ),
                 const SizedBox(height: 20),
                 ...logs.map((logWithExercise) {
-                  _initializeControllers(logWithExercise.log.exerciseId);
+                  _initializeControllers(logWithExercise.log.exerciseId, logWithExercise.log);
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: ExerciseCard(
@@ -135,5 +161,49 @@ class _EditLogScreenState extends State<EditLogScreen> {
         },
       ),
     );
+  }
+
+  Future<void> _saveLogs() async {
+    try {
+      final logs = await _exerciseLogDao.getLogsForDate(widget.date);
+      
+      for (final log in logs) {
+        final exerciseId = log.exerciseId;
+        final weightControllers = _weightControllers[exerciseId]!;
+        final repsControllers = _repsControllers[exerciseId]!;
+        
+        // Get the values from controllers
+        final weights = weightControllers.map((controller) {
+          final value = controller.text.trim();
+          return value.isEmpty ? null : double.tryParse(value);
+        }).toList();
+        
+        final reps = repsControllers.map((controller) {
+          final value = controller.text.trim();
+          return value.isEmpty ? null : int.tryParse(value);
+        }).toList();
+        // Update the log in database
+        await _exerciseLogDao.updateLog(
+          log.id,
+          weights: weights,
+          reps: reps,
+        );
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logs saved successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error saving logs: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
