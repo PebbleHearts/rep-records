@@ -4,11 +4,18 @@ import 'package:rep_records/navigators/tab-navigator/tab_navigator.dart';
 import 'package:rep_records/providers/theme_provider.dart';
 import 'package:rep_records/theme/themes.dart';
 import 'package:rep_records/database/database.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:rep_records/configs/constants.dart';
 
 late AppDatabase database;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: AppSecrets.supabaseUrl,
+    anonKey: AppSecrets.supabaseAnonKey,
+  );
   
   print('Initializing database...');
   database = AppDatabase();
