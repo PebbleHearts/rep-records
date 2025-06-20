@@ -23,9 +23,13 @@ class DateItem extends StatelessWidget {
     return InkWell(
       onTap: () => onDateTap(dateObject),
       borderRadius: BorderRadius.circular(10),
-      child: SizedBox(
+      child: Container(
         width: 50,
         height: 45,
+        decoration: BoxDecoration(
+          color: isDateSelected ? Theme.of(context).primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -35,15 +39,19 @@ class DateItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isDateSelected ? FontWeight.bold : FontWeight.normal,
-                color: isDateSelected ? Colors.black : Colors.white,
+                color: isDateSelected 
+                  ? Colors.white 
+                  : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
               ),
             ),
             Text(
               formattedDay,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: isDateSelected ? FontWeight.bold : FontWeight.normal,
-                color: isDateSelected ? Colors.black : Colors.grey,
+                color: isDateSelected 
+                  ? Colors.white 
+                  : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
               ),
             ),
           ],

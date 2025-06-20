@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rep_records/components/horizontal-date-selector/horizontal_date_selector.dart';
+import 'package:rep_records/main.dart';
 import 'package:rep_records/screens/edit-log-screen/edit_log_screen.dart';
 import 'package:rep_records/screens/log-screen/components/log_item.dart';
 import 'package:rep_records/screens/log-screen/components/routine_selection_sheet.dart';
 import 'package:rep_records/theme/app_theme.dart';
+import 'package:rep_records/database/database.dart';
+import 'package:rep_records/database/dao/exercise_log_dao.dart';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
@@ -13,7 +16,22 @@ class LogScreen extends StatefulWidget {
 }
 
 class _LogScreenState extends State<LogScreen> {
-  String _selectedDate = '21-03-2025'; // Default date in dd-mm-yyyy format
+  late String _selectedDate;
+  late ExerciseLogDao _exerciseLogDao;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with current date
+    _selectedDate = _formatDate(DateTime.now());
+    _exerciseLogDao = database.exerciseLogDao;
+  }
+
+  @override
+  void dispose() {
+    database.close();
+    super.dispose();
+  }
 
   void _showRoutineSelectionSheet(BuildContext context) {
     showModalBottomSheet(
@@ -28,36 +46,21 @@ class _LogScreenState extends State<LogScreen> {
     return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
   }
 
+  LogExercise _convertToLogExercise(ExerciseLogWithExercise logWithExercise) {
+    final sets = logWithExercise.log.setsData.sets.map((setData) => LogSet(
+      setNumber: setData.setNumber,
+      weight: setData.weight,
+      reps: setData.reps,
+    )).toList();
+
+    return LogExercise(
+      name: logWithExercise.exercise.name,
+      sets: sets,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Sample data - in a real app, this would come from a database or API
-    // final exercises = [
-    //   LogExercise(
-    //     name: 'Bench Press',
-    //     sets: [
-    //       LogSet(setNumber: 1, weight: 60, reps: 12),
-    //       LogSet(setNumber: 2, weight: 65, reps: 10),
-    //       LogSet(setNumber: 3, weight: 70, reps: 8),
-    //     ],
-    //   ),
-    //   LogExercise(
-    //     name: 'Squats',
-    //     sets: [
-    //       LogSet(setNumber: 1, weight: 80, reps: 10),
-    //       LogSet(setNumber: 2, weight: 85, reps: 8),
-    //       LogSet(setNumber: 3, weight: 90, reps: 6),
-    //     ],
-    //   ),
-    //   LogExercise(
-    //     name: 'Deadlift',
-    //     sets: [
-    //       LogSet(setNumber: 1, weight: 100, reps: 8),
-    //       LogSet(setNumber: 2, weight: 110, reps: 6),
-    //       LogSet(setNumber: 3, weight: 120, reps: 4),
-    //     ],
-    //   ),
-    // ];
-    final exercises = [];
 
     return Scaffold(
       backgroundColor: Theme.of(context).extension<AppTheme>()!.background,
@@ -85,68 +88,86 @@ class _LogScreenState extends State<LogScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 200,
-                        child: Center(
-                          child: Text(
-                            'Log',
-                            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              child: StreamBuilder<List<ExerciseLogWithExercise>>(
+                stream: _exerciseLogDao.watchLogsForDate(_selectedDate),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  }
+                  
+                  final logsWithExercises = snapshot.data ?? [];
+                  final exercises = logsWithExercises.map(_convertToLogExercise).toList();
+                  
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 200,
+                            child: Center(
+                              child: Text(
+                                'Log',
+                                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
-                        ),
+                          if (exercises.isEmpty)
+                            Column(
+                              children: [
+                                const SizedBox(height: 40),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // TODO: Implement start random exercise
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(double.infinity, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Start Random Exercise',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () => _showRoutineSelectionSheet(context),
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(double.infinity, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Start a Routine',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ],
+                            )
+                          else
+                            Column(
+                              children: exercises.map((exercise) => Padding(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                child: LogItem(
+                                  exerciseName: exercise.name,
+                                  sets: exercise.sets,
+                                ),
+                              )).toList(),
+                            ),
+                        ],
                       ),
-                      if (exercises.isEmpty)
-                        Column(
-                          children: [
-                            const SizedBox(height: 40),
-                            ElevatedButton(
-                              onPressed: () {
-                                // TODO: Implement start random exercise
-                              },
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 50),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text(
-                                'Start Random Exercise',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () => _showRoutineSelectionSheet(context),
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 50),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text(
-                                'Start a Routine',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ],
-                        )
-                      else
-                        Column(
-                          children: exercises.map((exercise) => Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: LogItem(
-                              exerciseName: exercise.name,
-                              sets: exercise.sets,
-                            ),
-                          )).toList(),
-                        ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
             HorizontalDateSelector(
