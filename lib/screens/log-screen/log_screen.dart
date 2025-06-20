@@ -91,10 +91,6 @@ class _LogScreenState extends State<LogScreen> {
               child: StreamBuilder<List<ExerciseLogWithExercise>>(
                 stream: _exerciseLogDao.watchLogsForDate(_selectedDate),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  
                   if (snapshot.hasError) {
                     return Center(
                       child: Text('Error: ${snapshot.error}'),
