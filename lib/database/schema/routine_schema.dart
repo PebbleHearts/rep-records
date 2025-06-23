@@ -5,7 +5,5 @@ class Routines extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
   TextColumn get status => text()(); // Can be 'active' or 'archived'
-  
-  @override
-  Set<Column> get primaryKey => {id};
+  BoolColumn get synced => boolean().withDefault(const Constant(false))();
 } 

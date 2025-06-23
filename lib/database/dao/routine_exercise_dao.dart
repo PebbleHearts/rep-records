@@ -10,6 +10,12 @@ class RoutineExerciseDao extends DatabaseAccessor<AppDatabase> with _$RoutineExe
 
   Future<List<RoutineExercise>> getExercisesForRoutine(int routineId) =>
       (select(routineExercises)..where((r) => r.routineId.equals(routineId))).get();
+
+  Future<List<RoutineExercise>> getAllRoutineExercises() =>
+      (select(routineExercises)).get();
+
+  Future<List<RoutineExercise>> getAllUnSyncedRoutineExercises() =>
+      (select(routineExercises)..where((t) => t.synced.equals(false))).get();
   
   Future<int> addExerciseToRoutine(RoutineExercisesCompanion exercise) =>
       into(routineExercises).insert(exercise);

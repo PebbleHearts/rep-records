@@ -19,6 +19,14 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     with _$ExerciseLogDaoMixin {
   ExerciseLogDao(super.database);
 
+  Future<List<ExerciseLogData>> getAllExerciseLogs() async {
+    return select(exerciseLog).get();
+  }
+
+  Future<List<ExerciseLogData>> getAllUnSyncedExerciseLogs() async {
+    return (select(exerciseLog)..where((t) => t.synced.equals(false))).get();
+  }
+
   Stream<List<ExerciseLogWithExercise>> watchLogsForDate(String date) {
     final query = select(exerciseLog).join([
       innerJoin(exercise, exercise.id.equalsExp(exerciseLog.exerciseId)),

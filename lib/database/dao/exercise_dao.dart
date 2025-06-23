@@ -16,6 +16,10 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
     return select(exercise).get();
   }
 
+  Future<List<ExerciseData>> getAllUnSyncedExercises() async {
+    return (select(exercise)..where((t) => t.synced.equals(false))).get();
+  }
+
   Future<List<ExerciseData>> getExercisesByCategory(int categoryId) async {
     return (select(exercise)..where((t) => t.categoryId.equals(categoryId))).get();
   }

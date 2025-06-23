@@ -21,12 +21,20 @@ class CategoryWithExercises {
 class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin {
   CategoryDao(super.database);
 
+  Future<void> updateSynced(List<int> categoryIds) async {
+    await (update(category)..where((t) => t.id.isIn(categoryIds))).write(CategoryCompanion(synced: const Value(true)));
+  }
+
   Stream<List<CategoryData>> watchAllCategories() {
     return select(category).watch();
   }
 
   Future<List<CategoryData>> getAllCategories() async {
     return select(category).get();
+  }
+
+  Future<List<CategoryData>> getAllUnSyncedCategories() async {
+    return (select(category)..where((t) => t.synced.equals(false))).get();
   }
 
   Future<void> insertCategory(CategoryCompanion categoryData) async {

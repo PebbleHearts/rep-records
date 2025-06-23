@@ -6,4 +6,5 @@ class Exercise extends Table {
   TextColumn get status => text().withDefault(const Constant('created'))();
   TextColumn get equipment => text()();
   IntColumn get categoryId => integer()();
+  BoolColumn get synced => boolean().withDefault(const Constant(false))();
 }

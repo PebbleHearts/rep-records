@@ -64,4 +64,5 @@ class ExerciseLog extends Table {
   TextColumn get status => text().withDefault(const Constant('created'))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  BoolColumn get synced => boolean().withDefault(const Constant(false))();
 } 

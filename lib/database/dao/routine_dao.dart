@@ -28,6 +28,10 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
     return select(routines).get();
   }
 
+  Future<List<Routine>> getAllUnSyncedRoutines() async {
+    return (select(routines)..where((t) => t.synced.equals(false))).get();
+  }
+
   Future<void> createRoutine(RoutinesCompanion routineData) async {
     await into(routines).insert(routineData);
   }
