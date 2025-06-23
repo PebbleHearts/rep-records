@@ -29,7 +29,9 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
   }
 
   Future<void> deleteExercise(int id) async {
-    await (delete(exercise)..where((t) => t.id.equals(id))).go();
+    await (update(exercise)..where((t) => t.id.equals(id))).write(
+      ExerciseCompanion(status: const Value('deleted'))
+    );
   }
 
   Future<void> updateExercise(ExerciseCompanion exerciseData) async {

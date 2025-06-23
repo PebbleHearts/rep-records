@@ -79,7 +79,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
 
   Stream<List<CategoryWithExercises>> watchCategoriesWithExercises() {
     final query = select(category).join([
-      leftOuterJoin(exercise, exercise.categoryId.equalsExp(category.id)),
+      leftOuterJoin(exercise, exercise.categoryId.equalsExp(category.id) & exercise.status.isNotValue('deleted')),
     ]);
 
     return query.watch().map((rows) {
