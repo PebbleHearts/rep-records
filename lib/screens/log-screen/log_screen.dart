@@ -33,7 +33,7 @@ class _LogScreenState extends State<LogScreen> {
     super.dispose();
   }
 
-  void _showRoutineSelectionSheet(BuildContext context) {
+  Future<void> _showRoutineSelectionSheet(BuildContext context) async {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

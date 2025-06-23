@@ -25,4 +25,8 @@ class RoutineExerciseDao extends DatabaseAccessor<AppDatabase> with _$RoutineExe
       ..where((t) => t.routineId.equals(routineId) & t.exerciseId.equals(exerciseId)))
       .go();
   }
+
+  Future<void> updateSynced(List<int> routineExerciseIds) async {
+    await (update(routineExercises)..where((t) => t.id.isIn(routineExerciseIds))).write(RoutineExercisesCompanion(synced: const Value(true)));
+  }
 } 

@@ -20,6 +20,10 @@ class RoutineWithExercises {
 class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
   RoutineDao(super.database);
 
+  Future<void> updateSynced(List<int> routineIds) async {
+    await (update(routines)..where((t) => t.id.isIn(routineIds))).write(RoutinesCompanion(synced: const Value(true)));
+  }
+
   Stream<List<Routine>> watchAllRoutines() {
     return select(routines).watch();
   }

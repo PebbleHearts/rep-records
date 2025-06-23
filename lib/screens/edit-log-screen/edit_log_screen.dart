@@ -31,6 +31,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
     super.initState();
     if (widget.routineId != -1) {
       // Create logs for the routine
+      print('Creating logs for routine ${widget.routineId} on date ${widget.date}');
       _exerciseLogDao.createLogsForRoutine(widget.routineId, widget.date);
     }
     _loadLogs();

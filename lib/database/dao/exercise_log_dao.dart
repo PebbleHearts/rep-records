@@ -123,4 +123,8 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
       );
     }
   }
+
+  Future<void> updateSynced(List<int> exerciseLogIds) async {
+    await (update(exerciseLog)..where((t) => t.id.isIn(exerciseLogIds))).write(ExerciseLogCompanion(synced: const Value(true)));
+  }
 }

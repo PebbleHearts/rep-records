@@ -35,4 +35,8 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
   Future<void> updateExercise(ExerciseCompanion exerciseData) async {
     await (update(exercise)..where((t) => t.id.equals(exerciseData.id.value))).write(exerciseData);
   }
+
+  Future<void> updateSynced(List<int> exerciseIds) async {
+    await (update(exercise)..where((t) => t.id.isIn(exerciseIds))).write(ExerciseCompanion(synced: const Value(true)));
+  }
 } 
