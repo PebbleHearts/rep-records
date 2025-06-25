@@ -3,7 +3,7 @@ import 'package:rep_records/database/dao/category_dao.dart';
 import 'package:rep_records/main.dart';
 
 class RoutineExerciseSelectionScreen extends StatefulWidget {
-  final int routineId;
+  final String routineId;
   final String routineName;
 
   const RoutineExerciseSelectionScreen({
@@ -17,7 +17,7 @@ class RoutineExerciseSelectionScreen extends StatefulWidget {
 }
 
 class _RoutineExerciseSelectionScreenState extends State<RoutineExerciseSelectionScreen> {
-  final Set<int> selectedExerciseIds = {};
+  final Set<String> selectedExerciseIds = {};
 
   @override
   Widget build(BuildContext context) {

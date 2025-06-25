@@ -8,7 +8,7 @@ part 'routine_exercise_dao.g.dart';
 class RoutineExerciseDao extends DatabaseAccessor<AppDatabase> with _$RoutineExerciseDaoMixin {
   RoutineExerciseDao(super.database);
 
-  Future<List<RoutineExercise>> getExercisesForRoutine(int routineId) =>
+  Future<List<RoutineExercise>> getExercisesForRoutine(String routineId) =>
       (select(routineExercises)..where((r) => r.routineId.equals(routineId))).get();
 
   Future<List<RoutineExercise>> getAllRoutineExercises() =>
@@ -20,13 +20,13 @@ class RoutineExerciseDao extends DatabaseAccessor<AppDatabase> with _$RoutineExe
   Future<int> addExerciseToRoutine(RoutineExercisesCompanion exercise) =>
       into(routineExercises).insert(exercise);
 
-  Future<void> deleteExerciseFromRoutine(int routineId, int exerciseId) async {
+  Future<void> deleteExerciseFromRoutine(String routineId, String exerciseId) async {
     await (delete(routineExercises)
       ..where((t) => t.routineId.equals(routineId) & t.exerciseId.equals(exerciseId)))
       .go();
   }
 
-  Future<void> updateSynced(List<int> routineExerciseIds) async {
+  Future<void> updateSynced(List<String> routineExerciseIds) async {
     await (update(routineExercises)..where((t) => t.id.isIn(routineExerciseIds))).write(RoutineExercisesCompanion(synced: const Value(true)));
   }
 } 

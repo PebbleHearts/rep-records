@@ -26,7 +26,7 @@ class _RoutineSelectionSheetState extends State<RoutineSelectionSheet> {
     _routinesFuture = RoutineDao(database).getAllRoutines();
   }
 
-  void _handleRoutineSelection(BuildContext context, int routineId) {
+  void _handleRoutineSelection(BuildContext context, String routineId) {
     Navigator.pop(context); // Close the bottom sheet
     Navigator.push(
       context,

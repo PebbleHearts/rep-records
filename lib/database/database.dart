@@ -13,6 +13,7 @@ import 'package:rep_records/database/schema/exercise.dart';
 import 'package:rep_records/database/schema/exercise_log.dart';
 import 'package:rep_records/database/schema/routine_exercise.dart';
 import 'package:rep_records/database/schema/routine_schema.dart';
+import 'package:rep_records/constants/common.dart';
 
 part 'database.g.dart';
 

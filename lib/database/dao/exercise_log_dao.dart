@@ -56,7 +56,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<void> updateLog(
-    int logId, {
+    String logId, {
     required List<double?> weights,
     required List<int?> reps,
   }) async {
@@ -81,7 +81,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     await (update(exerciseLog)..where((t) => t.id.equals(logId))).write(updatedLog);
   }
 
-  Future<void> createLogsForRoutine(int routineId, String date) async {
+  Future<void> createLogsForRoutine(String routineId, String date) async {
     print('inside createLogsForRoutine');
     final query = select(routines).join([
       leftOuterJoin(
@@ -110,7 +110,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
       print('Creating log for exercise ${exercise.id}');
       await into(exerciseLog).insert(
         ExerciseLogCompanion.insert(
-          exerciseId: exercise.id,
+          exerciseId: exercise.exerciseId,
           sessionDate: date,
           setsData: ExerciseLogsSetData(
             sets: [
@@ -124,7 +124,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     }
   }
 
-  Future<void> updateSynced(List<int> exerciseLogIds) async {
+  Future<void> updateSynced(List<String> exerciseLogIds) async {
     await (update(exerciseLog)..where((t) => t.id.isIn(exerciseLogIds))).write(ExerciseLogCompanion(synced: const Value(true)));
   }
 }

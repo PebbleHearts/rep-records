@@ -6,7 +6,7 @@ import 'package:rep_records/database/schema/exercise.dart';
 part 'category_dao.g.dart';
 
 class CategoryWithExercises {
-  final int categoryId;
+  final String categoryId;
   final String categoryName;
   final List<ExerciseData> exercises;
 
@@ -21,7 +21,7 @@ class CategoryWithExercises {
 class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin {
   CategoryDao(super.database);
 
-  Future<void> updateSynced(List<int> categoryIds) async {
+  Future<void> updateSynced(List<String> categoryIds) async {
     await (update(category)..where((t) => t.id.isIn(categoryIds))).write(CategoryCompanion(synced: const Value(true)));
   }
 
@@ -45,7 +45,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     await (update(category)..where((t) => t.id.equals(categoryData.id.value))).write(categoryData);
   }
 
-  Future<void> deleteCategory(int id) async {
+  Future<void> deleteCategory(String id) async {
     await (delete(category)..where((t) => t.id.equals(id))).go();
   }
 
@@ -55,7 +55,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     ]);
 
     final rows = await query.get();
-    final Map<int, CategoryWithExercises> result = {};
+    final Map<String, CategoryWithExercises> result = {};
     
     for (final row in rows) {
       final categoryData = row.readTable(category);
@@ -83,7 +83,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     ]);
 
     return query.watch().map((rows) {
-      final Map<int, CategoryWithExercises> result = {};
+      final Map<String, CategoryWithExercises> result = {};
       
       for (final row in rows) {
         final categoryData = row.readTable(category);

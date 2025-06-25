@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'dart:convert';
+import 'package:rep_records/constants/common.dart';
 
 class SetData {
   final int setNumber;
@@ -56,8 +57,8 @@ class ExerciseLogsSetsDataConverter extends TypeConverter<ExerciseLogsSetData, S
 }
 
 class ExerciseLog extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get exerciseId => integer()();
+  TextColumn get id => text().clientDefault(() => uuidInstance.v4())();
+  TextColumn get exerciseId => text()();
   TextColumn get sessionDate => text()();
   TextColumn get setsData => text().map(const ExerciseLogsSetsDataConverter())();
   TextColumn get notes => text().nullable()();

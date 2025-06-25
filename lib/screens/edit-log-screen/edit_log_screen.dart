@@ -7,7 +7,7 @@ import 'package:rep_records/screens/edit-log-screen/components/exercise_card.dar
 import 'package:rep_records/theme/app_theme.dart';
 
 class EditLogScreen extends StatefulWidget {
-  final int routineId;
+  final String routineId;
   final String date;
 
   const EditLogScreen({
@@ -22,14 +22,14 @@ class EditLogScreen extends StatefulWidget {
 
 class _EditLogScreenState extends State<EditLogScreen> {
   late Stream<List<ExerciseLogWithExercise>> _logsStream;
-  final Map<int, List<TextEditingController>> _weightControllers = {};
-  final Map<int, List<TextEditingController>> _repsControllers = {};
+  final Map<String, List<TextEditingController>> _weightControllers = {};
+  final Map<String, List<TextEditingController>> _repsControllers = {};
   final _exerciseLogDao = ExerciseLogDao(database);
 
   @override
   void initState() {
     super.initState();
-    if (widget.routineId != -1) {
+    if (widget.routineId.isNotEmpty) {
       // Create logs for the routine
       print('Creating logs for routine ${widget.routineId} on date ${widget.date}');
       _exerciseLogDao.createLogsForRoutine(widget.routineId, widget.date);
@@ -57,7 +57,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
     super.dispose();
   }
 
-  void _initializeControllers(int exerciseId, ExerciseLogData? log) {
+  void _initializeControllers(String exerciseId, ExerciseLogData? log) {
     if (!_weightControllers.containsKey(exerciseId)) {
       _weightControllers[exerciseId] = List.generate(
         3,

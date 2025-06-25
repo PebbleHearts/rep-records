@@ -503,7 +503,7 @@ class ManageRoutinesScreen extends StatelessWidget {
                                   width: double.infinity,
                                   child: ElevatedButton.icon(
                                     onPressed: () async {
-                                      final selectedExerciseIds = await Navigator.push<List<int>>(
+                                      final selectedExerciseIds = await Navigator.push<List<String>>(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => RoutineExerciseSelectionScreen(

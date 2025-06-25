@@ -20,7 +20,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
     return (select(exercise)..where((t) => t.synced.equals(false))).get();
   }
 
-  Future<List<ExerciseData>> getExercisesByCategory(int categoryId) async {
+  Future<List<ExerciseData>> getExercisesByCategory(String categoryId) async {
     return (select(exercise)..where((t) => t.categoryId.equals(categoryId))).get();
   }
 
@@ -28,7 +28,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
     await into(exercise).insert(exerciseData);
   }
 
-  Future<void> deleteExercise(int id) async {
+  Future<void> deleteExercise(String id) async {
     await (update(exercise)..where((t) => t.id.equals(id))).write(
       ExerciseCompanion(status: const Value('deleted'))
     );
@@ -38,7 +38,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
     await (update(exercise)..where((t) => t.id.equals(exerciseData.id.value))).write(exerciseData);
   }
 
-  Future<void> updateSynced(List<int> exerciseIds) async {
+  Future<void> updateSynced(List<String> exerciseIds) async {
     await (update(exercise)..where((t) => t.id.isIn(exerciseIds))).write(ExerciseCompanion(synced: const Value(true)));
   }
 } 

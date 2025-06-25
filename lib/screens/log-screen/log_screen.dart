@@ -74,7 +74,7 @@ class _LogScreenState extends State<LogScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditLogScreen(
-                    routineId: -1,
+                    routineId: '',
                     date: _selectedDate,
                   ),
                 ),

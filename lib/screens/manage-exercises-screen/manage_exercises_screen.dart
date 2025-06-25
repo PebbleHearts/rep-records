@@ -6,7 +6,6 @@ import 'package:rep_records/database/database.dart';
 import 'package:rep_records/main.dart';
 import 'package:rep_records/theme/app_theme.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:uuid/uuid.dart';
 
 class ExerciseItem {
   final String name;
@@ -28,9 +27,8 @@ class ManageExercisesScreen extends StatefulWidget {
 }
 
 class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
-  final uuidInstance = Uuid();
 
-  void _showAddCategoryBottomSheet(BuildContext context, {String? existingCategoryName, int? categoryId}) {
+  void _showAddCategoryBottomSheet(BuildContext context, {String? existingCategoryName, String? categoryId}) {
     final _formKey = GlobalKey<FormState>();
     final _nameController = TextEditingController(text: existingCategoryName);
 
@@ -79,6 +77,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                               CategoryCompanion(
                                 id: Value(categoryId),
                                 name: Value(_nameController.text),
+                                synced: const Value(false),
                               ),
                             );
                           } else {
@@ -144,7 +143,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
     );
   }
 
-  Widget _buildCategoryHeader(BuildContext context, String categoryName, int categoryId) {
+  Widget _buildCategoryHeader(BuildContext context, String categoryName, String categoryId) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(

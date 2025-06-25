@@ -20,7 +20,7 @@ class RoutineWithExercises {
 class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
   RoutineDao(super.database);
 
-  Future<void> updateSynced(List<int> routineIds) async {
+  Future<void> updateSynced(List<String> routineIds) async {
     await (update(routines)..where((t) => t.id.isIn(routineIds))).write(RoutinesCompanion(synced: const Value(true)));
   }
 
@@ -40,15 +40,15 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
     await into(routines).insert(routineData);
   }
 
-  Future<void> deleteRoutine(int id) async {
+  Future<void> deleteRoutine(String id) async {
     await (delete(routines)..where((t) => t.id.equals(id))).go();
   }
 
-  Future<void> updateRoutine(int id, RoutinesCompanion routineData) async {
+  Future<void> updateRoutine(String id, RoutinesCompanion routineData) async {
     await (update(routines)..where((t) => t.id.equals(id))).write(routineData);
   }
 
-  Future<RoutineWithExercises?> getRoutineWithExercises(int routineId) async {
+  Future<RoutineWithExercises?> getRoutineWithExercises(String routineId) async {
     final query = select(routines).join([
       leftOuterJoin(
         routineExercises,
@@ -92,7 +92,7 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
     ]);
 
     return query.watch().map((rows) {
-      final Map<int, RoutineWithExercises> result = {};
+      final Map<String, RoutineWithExercises> result = {};
       
       for (final row in rows) {
         final routineData = row.readTable(routines);
