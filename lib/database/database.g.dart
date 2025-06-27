@@ -1939,6 +1939,461 @@ class ExerciseLogCompanion extends UpdateCompanion<ExerciseLogData> {
   }
 }
 
+class $LogDayDetailsTable extends LogDayDetails
+    with TableInfo<$LogDayDetailsTable, LogDayDetail> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LogDayDetailsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => uuidInstance.v4(),
+  );
+  static const VerificationMeta _sessionDateMeta = const VerificationMeta(
+    'sessionDate',
+  );
+  @override
+  late final GeneratedColumn<String> sessionDate = GeneratedColumn<String>(
+    'session_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('created'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    sessionDate,
+    title,
+    status,
+    createdAt,
+    updatedAt,
+    synced,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'log_day_details';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LogDayDetail> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('session_date')) {
+      context.handle(
+        _sessionDateMeta,
+        sessionDate.isAcceptableOrUnknown(
+          data['session_date']!,
+          _sessionDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionDateMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  LogDayDetail map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LogDayDetail(
+      id:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}id'],
+          )!,
+      sessionDate:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}session_date'],
+          )!,
+      title:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}title'],
+          )!,
+      status:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}status'],
+          )!,
+      createdAt:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}created_at'],
+          )!,
+      updatedAt:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}updated_at'],
+          )!,
+      synced:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}synced'],
+          )!,
+    );
+  }
+
+  @override
+  $LogDayDetailsTable createAlias(String alias) {
+    return $LogDayDetailsTable(attachedDatabase, alias);
+  }
+}
+
+class LogDayDetail extends DataClass implements Insertable<LogDayDetail> {
+  final String id;
+  final String sessionDate;
+  final String title;
+  final String status;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final bool synced;
+  const LogDayDetail({
+    required this.id,
+    required this.sessionDate,
+    required this.title,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.synced,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['session_date'] = Variable<String>(sessionDate);
+    map['title'] = Variable<String>(title);
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['synced'] = Variable<bool>(synced);
+    return map;
+  }
+
+  LogDayDetailsCompanion toCompanion(bool nullToAbsent) {
+    return LogDayDetailsCompanion(
+      id: Value(id),
+      sessionDate: Value(sessionDate),
+      title: Value(title),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      synced: Value(synced),
+    );
+  }
+
+  factory LogDayDetail.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LogDayDetail(
+      id: serializer.fromJson<String>(json['id']),
+      sessionDate: serializer.fromJson<String>(json['sessionDate']),
+      title: serializer.fromJson<String>(json['title']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      synced: serializer.fromJson<bool>(json['synced']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'sessionDate': serializer.toJson<String>(sessionDate),
+      'title': serializer.toJson<String>(title),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'synced': serializer.toJson<bool>(synced),
+    };
+  }
+
+  LogDayDetail copyWith({
+    String? id,
+    String? sessionDate,
+    String? title,
+    String? status,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? synced,
+  }) => LogDayDetail(
+    id: id ?? this.id,
+    sessionDate: sessionDate ?? this.sessionDate,
+    title: title ?? this.title,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    synced: synced ?? this.synced,
+  );
+  LogDayDetail copyWithCompanion(LogDayDetailsCompanion data) {
+    return LogDayDetail(
+      id: data.id.present ? data.id.value : this.id,
+      sessionDate:
+          data.sessionDate.present ? data.sessionDate.value : this.sessionDate,
+      title: data.title.present ? data.title.value : this.title,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      synced: data.synced.present ? data.synced.value : this.synced,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LogDayDetail(')
+          ..write('id: $id, ')
+          ..write('sessionDate: $sessionDate, ')
+          ..write('title: $title, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, sessionDate, title, status, createdAt, updatedAt, synced);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LogDayDetail &&
+          other.id == this.id &&
+          other.sessionDate == this.sessionDate &&
+          other.title == this.title &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.synced == this.synced);
+}
+
+class LogDayDetailsCompanion extends UpdateCompanion<LogDayDetail> {
+  final Value<String> id;
+  final Value<String> sessionDate;
+  final Value<String> title;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<bool> synced;
+  final Value<int> rowid;
+  const LogDayDetailsCompanion({
+    this.id = const Value.absent(),
+    this.sessionDate = const Value.absent(),
+    this.title = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LogDayDetailsCompanion.insert({
+    this.id = const Value.absent(),
+    required String sessionDate,
+    required String title,
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : sessionDate = Value(sessionDate),
+       title = Value(title);
+  static Insertable<LogDayDetail> custom({
+    Expression<String>? id,
+    Expression<String>? sessionDate,
+    Expression<String>? title,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<bool>? synced,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (sessionDate != null) 'session_date': sessionDate,
+      if (title != null) 'title': title,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (synced != null) 'synced': synced,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LogDayDetailsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? sessionDate,
+    Value<String>? title,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<bool>? synced,
+    Value<int>? rowid,
+  }) {
+    return LogDayDetailsCompanion(
+      id: id ?? this.id,
+      sessionDate: sessionDate ?? this.sessionDate,
+      title: title ?? this.title,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      synced: synced ?? this.synced,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (sessionDate.present) {
+      map['session_date'] = Variable<String>(sessionDate.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LogDayDetailsCompanion(')
+          ..write('id: $id, ')
+          ..write('sessionDate: $sessionDate, ')
+          ..write('title: $title, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('synced: $synced, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1949,6 +2404,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $ExerciseLogTable exerciseLog = $ExerciseLogTable(this);
+  late final $LogDayDetailsTable logDayDetails = $LogDayDetailsTable(this);
   late final CategoryDao categoryDao = CategoryDao(this as AppDatabase);
   late final ExerciseDao exerciseDao = ExerciseDao(this as AppDatabase);
   late final RoutineDao routineDao = RoutineDao(this as AppDatabase);
@@ -1956,6 +2412,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this as AppDatabase,
   );
   late final ExerciseLogDao exerciseLogDao = ExerciseLogDao(
+    this as AppDatabase,
+  );
+  late final LogDayDetailsDao logDayDetailsDao = LogDayDetailsDao(
     this as AppDatabase,
   );
   @override
@@ -1968,6 +2427,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     exercise,
     routineExercises,
     exerciseLog,
+    logDayDetails,
   ];
 }
 
@@ -3084,6 +3544,257 @@ typedef $$ExerciseLogTableProcessedTableManager =
       ExerciseLogData,
       PrefetchHooks Function()
     >;
+typedef $$LogDayDetailsTableCreateCompanionBuilder =
+    LogDayDetailsCompanion Function({
+      Value<String> id,
+      required String sessionDate,
+      required String title,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+typedef $$LogDayDetailsTableUpdateCompanionBuilder =
+    LogDayDetailsCompanion Function({
+      Value<String> id,
+      Value<String> sessionDate,
+      Value<String> title,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+
+class $$LogDayDetailsTableFilterComposer
+    extends Composer<_$AppDatabase, $LogDayDetailsTable> {
+  $$LogDayDetailsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sessionDate => $composableBuilder(
+    column: $table.sessionDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LogDayDetailsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LogDayDetailsTable> {
+  $$LogDayDetailsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sessionDate => $composableBuilder(
+    column: $table.sessionDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LogDayDetailsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LogDayDetailsTable> {
+  $$LogDayDetailsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get sessionDate => $composableBuilder(
+    column: $table.sessionDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$LogDayDetailsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LogDayDetailsTable,
+          LogDayDetail,
+          $$LogDayDetailsTableFilterComposer,
+          $$LogDayDetailsTableOrderingComposer,
+          $$LogDayDetailsTableAnnotationComposer,
+          $$LogDayDetailsTableCreateCompanionBuilder,
+          $$LogDayDetailsTableUpdateCompanionBuilder,
+          (
+            LogDayDetail,
+            BaseReferences<_$AppDatabase, $LogDayDetailsTable, LogDayDetail>,
+          ),
+          LogDayDetail,
+          PrefetchHooks Function()
+        > {
+  $$LogDayDetailsTableTableManager(_$AppDatabase db, $LogDayDetailsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$LogDayDetailsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer:
+              () =>
+                  $$LogDayDetailsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer:
+              () => $$LogDayDetailsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> sessionDate = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LogDayDetailsCompanion(
+                id: id,
+                sessionDate: sessionDate,
+                title: title,
+                status: status,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                synced: synced,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required String sessionDate,
+                required String title,
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LogDayDetailsCompanion.insert(
+                id: id,
+                sessionDate: sessionDate,
+                title: title,
+                status: status,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                synced: synced,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable(table),
+                          BaseReferences(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LogDayDetailsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LogDayDetailsTable,
+      LogDayDetail,
+      $$LogDayDetailsTableFilterComposer,
+      $$LogDayDetailsTableOrderingComposer,
+      $$LogDayDetailsTableAnnotationComposer,
+      $$LogDayDetailsTableCreateCompanionBuilder,
+      $$LogDayDetailsTableUpdateCompanionBuilder,
+      (
+        LogDayDetail,
+        BaseReferences<_$AppDatabase, $LogDayDetailsTable, LogDayDetail>,
+      ),
+      LogDayDetail,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3098,4 +3809,6 @@ class $AppDatabaseManager {
       $$RoutineExercisesTableTableManager(_db, _db.routineExercises);
   $$ExerciseLogTableTableManager get exerciseLog =>
       $$ExerciseLogTableTableManager(_db, _db.exerciseLog);
+  $$LogDayDetailsTableTableManager get logDayDetails =>
+      $$LogDayDetailsTableTableManager(_db, _db.logDayDetails);
 }

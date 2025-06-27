@@ -26,7 +26,7 @@ class _RoutineSelectionSheetState extends State<RoutineSelectionSheet> {
     _routinesFuture = RoutineDao(database).getAllRoutines();
   }
 
-  void _handleRoutineSelection(BuildContext context, String routineId) {
+  void _handleRoutineSelection(BuildContext context, String routineId, String routineName) {
     Navigator.pop(context); // Close the bottom sheet
     Navigator.push(
       context,
@@ -34,6 +34,7 @@ class _RoutineSelectionSheetState extends State<RoutineSelectionSheet> {
         builder: (context) => EditLogScreen(
           routineId: routineId,
           date: widget.selectedDate,
+          routineName: routineName,
         ),
       ),
     );
@@ -123,7 +124,7 @@ class _RoutineSelectionSheetState extends State<RoutineSelectionSheet> {
                     final routine = routines[index];
                     return ListTile(
                       title: Text(routine.name),
-                      onTap: () => _handleRoutineSelection(context, routine.id),
+                      onTap: () => _handleRoutineSelection(context, routine.id, routine.name),
                     );
                   },
                 );

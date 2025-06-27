@@ -1,6 +1,7 @@
 import 'package:rep_records/database/dao/category_dao.dart';
 import 'package:rep_records/database/dao/exercise_dao.dart';
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
+import 'package:rep_records/database/dao/log_day_details_dao.dart';
 import 'package:rep_records/database/dao/routine_dao.dart';
 import 'package:rep_records/database/dao/routine_exercise_dao.dart';
 import 'package:rep_records/main.dart';
@@ -155,11 +156,41 @@ class UploadService {
     }
   }
 
+  static Future<void> upSyncLogDayDetails() async {
+    final logDayDetails = await LogDayDetailsDao(database).getAllUnSyncedLogDayDetails();
+    
+    try {
+      final response = await Supabase.instance.client.functions.invoke(
+        'upsync',
+        body: {
+          'table': 'log_day_details',
+          'tableData': logDayDetails.map((logDayDetail) => {
+            'id': logDayDetail.id,
+            'session_date': logDayDetail.sessionDate,
+            'title': logDayDetail.title,
+            'status': logDayDetail.status,
+          }).toList(),
+        },
+      );
+      
+      if (response.status != 200) {
+        throw Exception('Failed to sync log day details: ${response.data}');
+      }
+      
+      await LogDayDetailsDao(database).updateSynced(logDayDetails.map((logDayDetail) => logDayDetail.id).toList());
+      print('Log day details synced successfully');
+    } catch (e) {
+      print('Error syncing log day details: $e');
+      rethrow;
+    }
+  }
+
   static Future<void> upSync() async {
     await upSyncCategories();
     await upSyncExercises();
     await upSyncRoutines();
     await upSyncRoutineExercises();
     await upSyncExerciseLogs();
+    await upSyncLogDayDetails();
   }
 }

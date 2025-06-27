@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
+import 'package:rep_records/database/dao/log_day_details_dao.dart';
 import 'package:rep_records/database/dao/routine_dao.dart';
 import 'package:rep_records/database/database.dart';
 import 'package:rep_records/main.dart';
@@ -9,11 +11,13 @@ import 'package:rep_records/theme/app_theme.dart';
 class EditLogScreen extends StatefulWidget {
   final String routineId;
   final String date;
+  final String? routineName;
 
   const EditLogScreen({
     super.key,
     required this.routineId,
     required this.date,
+    this.routineName,
   });
 
   @override
@@ -25,7 +29,9 @@ class _EditLogScreenState extends State<EditLogScreen> {
   final Map<String, List<TextEditingController>> _weightControllers = {};
   final Map<String, List<TextEditingController>> _repsControllers = {};
   final Map<String, TextEditingController> _noteControllers = {};
+  final _titleController = TextEditingController();
   final _exerciseLogDao = ExerciseLogDao(database);
+  final _logDayDetailsDao = LogDayDetailsDao(database);
 
   @override
   void initState() {
@@ -36,10 +42,37 @@ class _EditLogScreenState extends State<EditLogScreen> {
       _exerciseLogDao.createLogsForRoutine(widget.routineId, widget.date);
     }
     _loadLogs();
+    _loadLogDayDetails();
+    _createLogDayDetailsIfNeeded();
   }
 
   void _loadLogs() {
     _logsStream = _exerciseLogDao.watchLogsForDate(widget.date);
+  }
+
+  Future<void> _loadLogDayDetails() async {
+    final existingLogDay = await _logDayDetailsDao.getLogDayDetailsByDate(widget.date);
+    if (existingLogDay != null) {
+      _titleController.text = existingLogDay.title;
+    } else if (widget.routineName != null && widget.routineName!.isNotEmpty) {
+      // Set routine name as default title if no existing log day details
+      _titleController.text = widget.routineName!;
+    }
+  }
+
+  Future<void> _createLogDayDetailsIfNeeded() async {
+    if (widget.routineName != null && widget.routineName!.isNotEmpty) {
+      final existingLogDay = await _logDayDetailsDao.getLogDayDetailsByDate(widget.date);
+      if (existingLogDay == null) {
+        // Create new log day details with routine name as title
+        await _logDayDetailsDao.insertLogDayDetails(
+          LogDayDetailsCompanion.insert(
+            sessionDate: widget.date,
+            title: widget.routineName!,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -58,6 +91,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
     for (final controller in _noteControllers.values) {
       controller.dispose();
     }
+    _titleController.dispose();
     super.dispose();
   }
 
@@ -109,7 +143,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         forceMaterialTransparency: true,
-        title: Text('Edit Log - ${widget.date}'),
+        title: Text(widget.date),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _saveLogs,
@@ -148,11 +182,28 @@ class _EditLogScreenState extends State<EditLogScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Exercise Logs',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                  child: TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      hintText: 'Tap to add a title...',
+                      hintStyle: TextStyle(
+                        color: Colors.grey.withOpacity(0.4),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -206,6 +257,21 @@ class _EditLogScreenState extends State<EditLogScreen> {
           reps: reps,
           note: note.isEmpty ? null : note,
         );
+      }
+
+      // Update the log day details if title has changed
+      final title = _titleController.text.trim();
+      if (title.isNotEmpty) {
+        final existingLogDay = await _logDayDetailsDao.getLogDayDetailsByDate(widget.date);
+        if (existingLogDay != null && title != existingLogDay.title) {
+          // Update existing log day details only if title has changed
+          await _logDayDetailsDao.updateLogDayDetails(
+            LogDayDetailsCompanion(
+              id: drift.Value(existingLogDay.id),
+              title: drift.Value(title),
+            ),
+          );
+        }
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

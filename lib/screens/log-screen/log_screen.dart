@@ -7,6 +7,7 @@ import 'package:rep_records/screens/log-screen/components/routine_selection_shee
 import 'package:rep_records/theme/app_theme.dart';
 import 'package:rep_records/database/database.dart';
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
+import 'package:rep_records/database/dao/log_day_details_dao.dart';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
@@ -18,6 +19,7 @@ class LogScreen extends StatefulWidget {
 class _LogScreenState extends State<LogScreen> {
   late String _selectedDate;
   late ExerciseLogDao _exerciseLogDao;
+  late LogDayDetailsDao _logDayDetailsDao;
 
   @override
   void initState() {
@@ -25,6 +27,7 @@ class _LogScreenState extends State<LogScreen> {
     // Initialize with current date
     _selectedDate = _formatDate(DateTime.now());
     _exerciseLogDao = database.exerciseLogDao;
+    _logDayDetailsDao = database.logDayDetailsDao;
   }
 
   @override
@@ -114,6 +117,30 @@ class _LogScreenState extends State<LogScreen> {
                                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                               ),
                             ),
+                          ),
+                          FutureBuilder<LogDayDetail?>(
+                            future: _logDayDetailsDao.getLogDayDetailsByDate(_selectedDate),
+                            builder: (context, titleSnapshot) {
+                              final title = titleSnapshot.data?.title;
+                              if (title != null && title.isNotEmpty) {
+                                return Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 16, left: 5),
+                                    child: Text(
+                                      title,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).extension<AppTheme>()?.text.withOpacity(0.7),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
                           ),
                           if (exercises.isEmpty)
                             Column(

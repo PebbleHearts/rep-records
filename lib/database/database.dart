@@ -6,11 +6,13 @@ import 'package:path/path.dart' as p;
 import 'package:rep_records/database/dao/category_dao.dart';
 import 'package:rep_records/database/dao/exercise_dao.dart';
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
+import 'package:rep_records/database/dao/log_day_details_dao.dart';
 import 'package:rep_records/database/dao/routine_dao.dart';
 import 'package:rep_records/database/dao/routine_exercise_dao.dart';
 import 'package:rep_records/database/schema/category.dart';
 import 'package:rep_records/database/schema/exercise.dart';
 import 'package:rep_records/database/schema/exercise_log.dart';
+import 'package:rep_records/database/schema/log_day_details.dart';
 import 'package:rep_records/database/schema/routine_exercise.dart';
 import 'package:rep_records/database/schema/routine_schema.dart';
 import 'package:rep_records/constants/common.dart';
@@ -18,8 +20,8 @@ import 'package:rep_records/constants/common.dart';
 part 'database.g.dart';
 
 @DriftDatabase(
-  tables: [Routines, Category, Exercise, RoutineExercises, ExerciseLog],
-  daos: [CategoryDao, ExerciseDao, RoutineDao, RoutineExerciseDao, ExerciseLogDao]
+  tables: [Routines, Category, Exercise, RoutineExercises, ExerciseLog, LogDayDetails],
+  daos: [CategoryDao, ExerciseDao, RoutineDao, RoutineExerciseDao, ExerciseLogDao, LogDayDetailsDao]
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
@@ -31,7 +33,7 @@ class AppDatabase extends _$AppDatabase {
   // 4. Change a column's type
   // 5. Add or modify constraints
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -43,7 +45,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        // Add migration logic here when needed
+        if (from <= 6 && to >= 7) {
+          // Create the log_day_details table when upgrading to version 7
+          await m.createTable(logDayDetails);
+        }
       },
     );
   }
