@@ -5,11 +5,13 @@ import 'package:rep_records/theme/app_theme.dart';
 class LogItem extends StatelessWidget {
   final String exerciseName;
   final List<LogSet> sets;
+  final String? note;
 
   const LogItem({
     super.key,
     required this.exerciseName,
     required this.sets,
+    this.note,
   });
 
   @override
@@ -60,6 +62,25 @@ class LogItem extends StatelessWidget {
               weight: set.weight,
               reps: set.reps,
             )),
+            if (note != null && note!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).extension<AppTheme>()!.background3,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  note!,
+                  style: TextStyle(
+                    color: Theme.of(context).extension<AppTheme>()!.text.withOpacity(0.8),
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

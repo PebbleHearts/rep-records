@@ -65,6 +65,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     String logId, {
     required List<double?> weights,
     required List<int?> reps,
+    String? note,
   }) async {
     final updatedSets = List.generate(3, (index) {
       return SetData(
@@ -77,6 +78,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     final updatedLog = ExerciseLogCompanion(
       id: Value(logId),
       setsData: Value(ExerciseLogsSetData(sets: updatedSets)),
+      notes: Value(note),
       updatedAt: Value(DateTime.now()),
       synced: const Value(false),
     );

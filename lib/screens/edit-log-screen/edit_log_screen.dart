@@ -24,6 +24,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
   late Stream<List<ExerciseLogWithExercise>> _logsStream;
   final Map<String, List<TextEditingController>> _weightControllers = {};
   final Map<String, List<TextEditingController>> _repsControllers = {};
+  final Map<String, TextEditingController> _noteControllers = {};
   final _exerciseLogDao = ExerciseLogDao(database);
 
   @override
@@ -53,6 +54,9 @@ class _EditLogScreenState extends State<EditLogScreen> {
       for (final controller in controllers) {
         controller.dispose();
       }
+    }
+    for (final controller in _noteControllers.values) {
+      controller.dispose();
     }
     super.dispose();
   }
@@ -87,6 +91,13 @@ class _EditLogScreenState extends State<EditLogScreen> {
           return controller;
         },
       );
+    }
+    if (!_noteControllers.containsKey(exerciseId)) {
+      final controller = TextEditingController();
+      if (log != null && log.notes != null) {
+        controller.text = log.notes!;
+      }
+      _noteControllers[exerciseId] = controller;
     }
   }
 
@@ -153,6 +164,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
                       exerciseName: logWithExercise.exercise.name,
                       weightControllers: _weightControllers[logWithExercise.log.exerciseId]!,
                       repsControllers: _repsControllers[logWithExercise.log.exerciseId]!,
+                      noteController: _noteControllers[logWithExercise.log.exerciseId]!,
                     ),
                   );
                 }),
@@ -172,6 +184,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
         final exerciseId = log.exerciseId;
         final weightControllers = _weightControllers[exerciseId]!;
         final repsControllers = _repsControllers[exerciseId]!;
+        final noteController = _noteControllers[exerciseId]!;
         
         // Get the values from controllers
         final weights = weightControllers.map((controller) {
@@ -183,11 +196,15 @@ class _EditLogScreenState extends State<EditLogScreen> {
           final value = controller.text.trim();
           return value.isEmpty ? null : int.tryParse(value);
         }).toList();
+
+        final note = noteController.text.trim();
+        
         // Update the log in database
         await _exerciseLogDao.updateLog(
           log.id,
           weights: weights,
           reps: reps,
+          note: note.isEmpty ? null : note,
         );
       }
 

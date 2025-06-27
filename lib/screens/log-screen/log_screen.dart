@@ -56,6 +56,7 @@ class _LogScreenState extends State<LogScreen> {
     return LogExercise(
       name: logWithExercise.exercise.name,
       sets: sets,
+      note: logWithExercise.log.notes,
     );
   }
 
@@ -156,6 +157,7 @@ class _LogScreenState extends State<LogScreen> {
                                 child: LogItem(
                                   exerciseName: exercise.name,
                                   sets: exercise.sets,
+                                  note: exercise.note,
                                 ),
                               )).toList(),
                             ),
@@ -184,9 +186,11 @@ class _LogScreenState extends State<LogScreen> {
 class LogExercise {
   final String name;
   final List<LogSet> sets;
+  final String? note;
 
   const LogExercise({
     required this.name,
     required this.sets,
+    this.note,
   });
 }

@@ -6,12 +6,14 @@ class ExerciseCard extends StatelessWidget {
   final String exerciseName;
   final List<TextEditingController> weightControllers;
   final List<TextEditingController> repsControllers;
+  final TextEditingController noteController;
 
   const ExerciseCard({
     super.key,
     required this.exerciseName,
     required this.weightControllers,
     required this.repsControllers,
+    required this.noteController,
   });
 
   @override
@@ -40,6 +42,8 @@ class ExerciseCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ...List.generate(3, (index) => _buildSetRow(context, index)),
+            const SizedBox(height: 16),
+            _buildNoteField(context),
           ],
         ),
       ),
@@ -115,6 +119,31 @@ class ExerciseCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNoteField(BuildContext context) {
+    final theme = Theme.of(context).extension<AppTheme>()!;
+
+    return TextField(
+      controller: noteController,
+      maxLines: 3,
+      minLines: 1,
+      decoration: InputDecoration(
+        hintText: 'Note',
+        hintStyle: TextStyle(color: theme.text.withOpacity(0.5)),
+        filled: true,
+        fillColor: theme.background3,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      ),
+      style: TextStyle(
+        color: theme.text,
+        fontStyle: FontStyle.italic,
       ),
     );
   }
