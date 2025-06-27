@@ -333,6 +333,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
                                 name: Value(_nameController.text),
                                 equipment: Value(_equipmentController.text),
                                 categoryId: Value(existingExercise.categoryId),
+                                synced: const Value(false),
                               ),
                             );
                           } else {

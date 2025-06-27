@@ -107,6 +107,7 @@ class UploadService {
             'id': routineExercise.id,
             'routine_id': routineExercise.routineId,
             'exercise_id': routineExercise.exerciseId,
+            'status': routineExercise.status,
           }).toList(),
         },
       );

@@ -6,4 +6,5 @@ class RoutineExercises extends Table {
   TextColumn get routineId => text()();
   TextColumn get exerciseId => text()();
   BoolColumn get synced => boolean().withDefault(const Constant(false))();
+  TextColumn get status => text().withDefault(const Constant('created'))();
 } 

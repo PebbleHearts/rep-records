@@ -9,11 +9,11 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
   ExerciseDao(super.database);
 
   Stream<List<ExerciseData>> watchAllExercises() {
-    return select(exercise).watch();
+    return (select(exercise)..where((t) => t.status.isNotValue('deleted'))).watch();
   }
 
   Future<List<ExerciseData>> getAllExercises() async {
-    return select(exercise).get();
+    return (select(exercise)..where((t) => t.status.isNotValue('deleted'))).get();
   }
 
   Future<List<ExerciseData>> getAllUnSyncedExercises() async {
@@ -21,7 +21,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
   }
 
   Future<List<ExerciseData>> getExercisesByCategory(String categoryId) async {
-    return (select(exercise)..where((t) => t.categoryId.equals(categoryId))).get();
+    return (select(exercise)..where((t) => t.categoryId.equals(categoryId) & t.status.isNotValue('deleted'))).get();
   }
 
   Future<void> insertExercise(ExerciseCompanion exerciseData) async {
@@ -30,7 +30,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase> with _$ExerciseDaoMixin 
 
   Future<void> deleteExercise(String id) async {
     await (update(exercise)..where((t) => t.id.equals(id))).write(
-      ExerciseCompanion(status: const Value('deleted'))
+      ExerciseCompanion(status: const Value('deleted'), synced: const Value(false))
     );
   }
 

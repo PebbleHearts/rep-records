@@ -26,11 +26,11 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
   }
 
   Stream<List<CategoryData>> watchAllCategories() {
-    return select(category).watch();
+    return (select(category)..where((t) => t.status.isNotValue('deleted'))).watch();
   }
 
   Future<List<CategoryData>> getAllCategories() async {
-    return select(category).get();
+    return (select(category)..where((t) => t.status.isNotValue('deleted'))).get();
   }
 
   Future<List<CategoryData>> getAllUnSyncedCategories() async {
@@ -46,12 +46,12 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
   }
 
   Future<void> deleteCategory(String id) async {
-    await (delete(category)..where((t) => t.id.equals(id))).go();
+    await (update(category)..where((t) => t.id.equals(id))).write(CategoryCompanion(status: const Value('deleted'), synced: const Value(false)));
   }
 
   Future<List<CategoryWithExercises>> getCategoriesWithExercises() async {
     final query = select(category).join([
-      leftOuterJoin(exercise, exercise.categoryId.equalsExp(category.id)),
+      leftOuterJoin(exercise, exercise.categoryId.equalsExp(category.id) & exercise.status.isNotValue('deleted')),
     ]);
 
     final rows = await query.get();
@@ -78,7 +78,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
   }
 
   Stream<List<CategoryWithExercises>> watchCategoriesWithExercises() {
-    final query = select(category).join([
+    final query = (select(category)..where((t) => t.status.isNotValue('deleted'))).join([
       leftOuterJoin(exercise, exercise.categoryId.equalsExp(category.id) & exercise.status.isNotValue('deleted')),
     ]);
 
@@ -88,6 +88,9 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
       for (final row in rows) {
         final categoryData = row.readTable(category);
         final exerciseData = row.readTableOrNull(exercise);
+
+        print('categoryData: ${categoryData.id} ${categoryData.name} ${categoryData.status}');
+        print('exerciseData: ${exerciseData?.id} ${exerciseData?.name} ${exerciseData?.status}');
         
         if (!result.containsKey(categoryData.id)) {
           result[categoryData.id] = CategoryWithExercises(

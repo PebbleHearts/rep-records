@@ -1069,8 +1069,24 @@ class $RoutineExercisesTable extends RoutineExercises
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  List<GeneratedColumn> get $columns => [id, routineId, exerciseId, synced];
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('created'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    routineId,
+    exerciseId,
+    synced,
+    status,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1108,6 +1124,12 @@ class $RoutineExercisesTable extends RoutineExercises
         synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
       );
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
     return context;
   }
 
@@ -1137,6 +1159,11 @@ class $RoutineExercisesTable extends RoutineExercises
             DriftSqlType.bool,
             data['${effectivePrefix}synced'],
           )!,
+      status:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}status'],
+          )!,
     );
   }
 
@@ -1151,11 +1178,13 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
   final String routineId;
   final String exerciseId;
   final bool synced;
+  final String status;
   const RoutineExercise({
     required this.id,
     required this.routineId,
     required this.exerciseId,
     required this.synced,
+    required this.status,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1164,6 +1193,7 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
     map['routine_id'] = Variable<String>(routineId);
     map['exercise_id'] = Variable<String>(exerciseId);
     map['synced'] = Variable<bool>(synced);
+    map['status'] = Variable<String>(status);
     return map;
   }
 
@@ -1173,6 +1203,7 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       routineId: Value(routineId),
       exerciseId: Value(exerciseId),
       synced: Value(synced),
+      status: Value(status),
     );
   }
 
@@ -1186,6 +1217,7 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       routineId: serializer.fromJson<String>(json['routineId']),
       exerciseId: serializer.fromJson<String>(json['exerciseId']),
       synced: serializer.fromJson<bool>(json['synced']),
+      status: serializer.fromJson<String>(json['status']),
     );
   }
   @override
@@ -1196,6 +1228,7 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       'routineId': serializer.toJson<String>(routineId),
       'exerciseId': serializer.toJson<String>(exerciseId),
       'synced': serializer.toJson<bool>(synced),
+      'status': serializer.toJson<String>(status),
     };
   }
 
@@ -1204,11 +1237,13 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
     String? routineId,
     String? exerciseId,
     bool? synced,
+    String? status,
   }) => RoutineExercise(
     id: id ?? this.id,
     routineId: routineId ?? this.routineId,
     exerciseId: exerciseId ?? this.exerciseId,
     synced: synced ?? this.synced,
+    status: status ?? this.status,
   );
   RoutineExercise copyWithCompanion(RoutineExercisesCompanion data) {
     return RoutineExercise(
@@ -1217,6 +1252,7 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       exerciseId:
           data.exerciseId.present ? data.exerciseId.value : this.exerciseId,
       synced: data.synced.present ? data.synced.value : this.synced,
+      status: data.status.present ? data.status.value : this.status,
     );
   }
 
@@ -1226,13 +1262,14 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
           ..write('id: $id, ')
           ..write('routineId: $routineId, ')
           ..write('exerciseId: $exerciseId, ')
-          ..write('synced: $synced')
+          ..write('synced: $synced, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, routineId, exerciseId, synced);
+  int get hashCode => Object.hash(id, routineId, exerciseId, synced, status);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1240,7 +1277,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
           other.id == this.id &&
           other.routineId == this.routineId &&
           other.exerciseId == this.exerciseId &&
-          other.synced == this.synced);
+          other.synced == this.synced &&
+          other.status == this.status);
 }
 
 class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
@@ -1248,12 +1286,14 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
   final Value<String> routineId;
   final Value<String> exerciseId;
   final Value<bool> synced;
+  final Value<String> status;
   final Value<int> rowid;
   const RoutineExercisesCompanion({
     this.id = const Value.absent(),
     this.routineId = const Value.absent(),
     this.exerciseId = const Value.absent(),
     this.synced = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RoutineExercisesCompanion.insert({
@@ -1261,6 +1301,7 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     required String routineId,
     required String exerciseId,
     this.synced = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : routineId = Value(routineId),
        exerciseId = Value(exerciseId);
@@ -1269,6 +1310,7 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     Expression<String>? routineId,
     Expression<String>? exerciseId,
     Expression<bool>? synced,
+    Expression<String>? status,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1276,6 +1318,7 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
       if (routineId != null) 'routine_id': routineId,
       if (exerciseId != null) 'exercise_id': exerciseId,
       if (synced != null) 'synced': synced,
+      if (status != null) 'status': status,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1285,6 +1328,7 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     Value<String>? routineId,
     Value<String>? exerciseId,
     Value<bool>? synced,
+    Value<String>? status,
     Value<int>? rowid,
   }) {
     return RoutineExercisesCompanion(
@@ -1292,6 +1336,7 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
       routineId: routineId ?? this.routineId,
       exerciseId: exerciseId ?? this.exerciseId,
       synced: synced ?? this.synced,
+      status: status ?? this.status,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1311,6 +1356,9 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     if (synced.present) {
       map['synced'] = Variable<bool>(synced.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1324,6 +1372,7 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
           ..write('routineId: $routineId, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('synced: $synced, ')
+          ..write('status: $status, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2526,6 +2575,7 @@ typedef $$RoutineExercisesTableCreateCompanionBuilder =
       required String routineId,
       required String exerciseId,
       Value<bool> synced,
+      Value<String> status,
       Value<int> rowid,
     });
 typedef $$RoutineExercisesTableUpdateCompanionBuilder =
@@ -2534,6 +2584,7 @@ typedef $$RoutineExercisesTableUpdateCompanionBuilder =
       Value<String> routineId,
       Value<String> exerciseId,
       Value<bool> synced,
+      Value<String> status,
       Value<int> rowid,
     });
 
@@ -2563,6 +2614,11 @@ class $$RoutineExercisesTableFilterComposer
 
   ColumnFilters<bool> get synced => $composableBuilder(
     column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2595,6 +2651,11 @@ class $$RoutineExercisesTableOrderingComposer
     column: $table.synced,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$RoutineExercisesTableAnnotationComposer
@@ -2619,6 +2680,9 @@ class $$RoutineExercisesTableAnnotationComposer
 
   GeneratedColumn<bool> get synced =>
       $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 }
 
 class $$RoutineExercisesTableTableManager
@@ -2669,12 +2733,14 @@ class $$RoutineExercisesTableTableManager
                 Value<String> routineId = const Value.absent(),
                 Value<String> exerciseId = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RoutineExercisesCompanion(
                 id: id,
                 routineId: routineId,
                 exerciseId: exerciseId,
                 synced: synced,
+                status: status,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2683,12 +2749,14 @@ class $$RoutineExercisesTableTableManager
                 required String routineId,
                 required String exerciseId,
                 Value<bool> synced = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RoutineExercisesCompanion.insert(
                 id: id,
                 routineId: routineId,
                 exerciseId: exerciseId,
                 synced: synced,
+                status: status,
                 rowid: rowid,
               ),
           withReferenceMapper:

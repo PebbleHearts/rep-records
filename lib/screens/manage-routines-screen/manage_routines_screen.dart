@@ -9,31 +9,7 @@ import 'package:rep_records/screens/routine-exercise-selection-screen/routine_ex
 import 'package:rep_records/theme/app_theme.dart';
 
 class ManageRoutinesScreen extends StatelessWidget {
-  ManageRoutinesScreen({super.key});
-
-  // Dummy exercises for each routine
-  final Map<String, List<Map<String, dynamic>>> _dummyExercises = {
-    'Push Day': [
-      {'name': 'Bench Press', 'category': 'Chest'},
-      {'name': 'Overhead Press', 'category': 'Shoulders'},
-      {'name': 'Tricep Pushdowns', 'category': 'Triceps'},
-    ],
-    'Pull Day': [
-      {'name': 'Pull-ups', 'category': 'Back'},
-      {'name': 'Barbell Rows', 'category': 'Back'},
-      {'name': 'Bicep Curls', 'category': 'Biceps'},
-    ],
-    'Leg Day': [
-      {'name': 'Squats', 'category': 'Legs'},
-      {'name': 'Romanian Deadlifts', 'category': 'Legs'},
-      {'name': 'Leg Press', 'category': 'Legs'},
-    ],
-    'Full Body': [
-      {'name': 'Deadlifts', 'category': 'Full Body'},
-      {'name': 'Push-ups', 'category': 'Chest'},
-      {'name': 'Dumbbell Rows', 'category': 'Back'},
-    ],
-  };
+  const ManageRoutinesScreen({super.key});
 
   void _showAddRoutineBottomSheet(BuildContext context, {Routine? routineToEdit}) {
     final _formKey = GlobalKey<FormState>();
@@ -83,6 +59,7 @@ class ManageRoutinesScreen extends StatelessWidget {
                             RoutinesCompanion(
                               name: Value(_nameController.text),
                               status: Value(routineToEdit.status),
+                              synced: const Value(false),
                             ),
                           );
                         } else {

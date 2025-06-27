@@ -40,6 +40,7 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
     await into(routines).insert(routineData);
   }
 
+  // TODO: modify this such that we only change the status to deleted and not delete the routine such that we can still sync the routine
   Future<void> deleteRoutine(String id) async {
     await (delete(routines)..where((t) => t.id.equals(id))).go();
   }
@@ -83,7 +84,7 @@ class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {
     final query = select(routines).join([
       leftOuterJoin(
         routineExercises,
-        routineExercises.routineId.equalsExp(routines.id),
+        routineExercises.routineId.equalsExp(routines.id) & routineExercises.status.isNotValue('deleted'),
       ),
       leftOuterJoin(
         exercise,

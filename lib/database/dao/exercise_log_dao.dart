@@ -20,17 +20,23 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
   ExerciseLogDao(super.database);
 
   Future<List<ExerciseLogData>> getAllExerciseLogs() async {
-    return select(exerciseLog).get();
+    return (select(exerciseLog)..where((t) => t.status.isNotValue('deleted'))).get();
   }
 
   Future<List<ExerciseLogData>> getAllUnSyncedExerciseLogs() async {
     return (select(exerciseLog)..where((t) => t.synced.equals(false))).get();
   }
 
+  Future<void> deleteExerciseLog(String id) async {
+    await (update(exerciseLog)..where((t) => t.id.equals(id))).write(
+      ExerciseLogCompanion(status: const Value('deleted'), synced: const Value(false))
+    );
+  }
+
   Stream<List<ExerciseLogWithExercise>> watchLogsForDate(String date) {
-    final query = select(exerciseLog).join([
+    final query = (select(exerciseLog)..where((t) => exerciseLog.sessionDate.equals(date) & t.status.isNotValue('deleted'))).join([
       innerJoin(exercise, exercise.id.equalsExp(exerciseLog.exerciseId)),
-    ])..where(exerciseLog.sessionDate.equals(date));
+    ]);
 
     return query.watch().map((rows) {
       final List<ExerciseLogWithExercise> result = [];
@@ -60,10 +66,6 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     required List<double?> weights,
     required List<int?> reps,
   }) async {
-    final log = await (select(exerciseLog)..where((t) => t.id.equals(logId))).getSingle();
-
-    print('updating log ${log.id} with weights $weights and reps $reps');
-    
     final updatedSets = List.generate(3, (index) {
       return SetData(
         setNumber: index + 1,
@@ -76,38 +78,29 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
       id: Value(logId),
       setsData: Value(ExerciseLogsSetData(sets: updatedSets)),
       updatedAt: Value(DateTime.now()),
+      synced: const Value(false),
     );
 
     await (update(exerciseLog)..where((t) => t.id.equals(logId))).write(updatedLog);
   }
 
   Future<void> createLogsForRoutine(String routineId, String date) async {
-    print('inside createLogsForRoutine');
     final query = select(routines).join([
       leftOuterJoin(
         routineExercises,
         routineExercises.routineId.equalsExp(routines.id),
       ),
     ])..where(routines.id.equals(routineId));
-    print('inside createLogsForRoutine 2');
 
     final rows = await query.get();
-
-    if (rows.isEmpty) {
-      print('inside createLogsForRoutine 3');
-    }
 
     final exercises =
         rows
             .map((row) => row.readTableOrNull(routineExercises))
             .whereType<RoutineExercise>()
             .toList();
-    print('inside createLogsForRoutine 4');
-    print(rows);
-    print(exercises);
 
     for (final exercise in exercises) {
-      print('Creating log for exercise ${exercise.id}');
       await into(exerciseLog).insert(
         ExerciseLogCompanion.insert(
           exerciseId: exercise.exerciseId,
