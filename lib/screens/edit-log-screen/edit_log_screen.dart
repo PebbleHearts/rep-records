@@ -261,17 +261,15 @@ class _EditLogScreenState extends State<EditLogScreen> {
 
       // Update the log day details if title has changed
       final title = _titleController.text.trim();
-      if (title.isNotEmpty) {
-        final existingLogDay = await _logDayDetailsDao.getLogDayDetailsByDate(widget.date);
-        if (existingLogDay != null && title != existingLogDay.title) {
-          // Update existing log day details only if title has changed
-          await _logDayDetailsDao.updateLogDayDetails(
-            LogDayDetailsCompanion(
-              id: drift.Value(existingLogDay.id),
-              title: drift.Value(title),
-            ),
-          );
-        }
+      final existingLogDay = await _logDayDetailsDao.getLogDayDetailsByDate(widget.date);
+      if (existingLogDay != null && title != existingLogDay.title) {
+        // Update existing log day details (including empty title)
+        await _logDayDetailsDao.updateLogDayDetails(
+          LogDayDetailsCompanion(
+            id: drift.Value(existingLogDay.id),
+            title: drift.Value(title),
+          ),
+        );
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

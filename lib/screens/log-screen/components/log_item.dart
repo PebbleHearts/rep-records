@@ -66,9 +66,8 @@ class LogItem extends StatelessWidget {
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.only(bottom: 12, left: 12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).extension<AppTheme>()!.background3,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
