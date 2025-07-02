@@ -36,32 +36,34 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).extension<AppTheme>()!.background,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).extension<AppTheme>()!.background,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    existingCategoryName != null ? 'Edit Category' : 'Add New Category',
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      existingCategoryName != null ? 'Edit Category' : 'Add New Category',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -138,6 +140,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -290,13 +293,15 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).extension<AppTheme>()!.background,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).extension<AppTheme>()!.background,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
           ),
-        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -418,6 +423,7 @@ class _ManageExercisesScreenState extends State<ManageExercisesScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
