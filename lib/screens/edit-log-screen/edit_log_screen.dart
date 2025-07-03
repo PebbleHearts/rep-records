@@ -97,8 +97,14 @@ class _EditLogScreenState extends State<EditLogScreen> {
 
   void _initializeControllers(String exerciseId, ExerciseLogData? log) {
     if (!_weightControllers.containsKey(exerciseId)) {
+      // Initialize with at least 1 set, or based on existing log data
+      int initialSetCount = 1;
+      if (log != null && log.setsData.sets.isNotEmpty) {
+        initialSetCount = log.setsData.sets.length;
+      }
+      
       _weightControllers[exerciseId] = List.generate(
-        3,
+        initialSetCount,
         (index) {
           final controller = TextEditingController();
           if (log != null && index < log.setsData.sets.length) {
@@ -112,8 +118,11 @@ class _EditLogScreenState extends State<EditLogScreen> {
       );
     }
     if (!_repsControllers.containsKey(exerciseId)) {
+      // Initialize with same count as weight controllers
+      int initialSetCount = _weightControllers[exerciseId]!.length;
+      
       _repsControllers[exerciseId] = List.generate(
-        3,
+        initialSetCount,
         (index) {
           final controller = TextEditingController();
           if (log != null && index < log.setsData.sets.length) {
@@ -133,6 +142,24 @@ class _EditLogScreenState extends State<EditLogScreen> {
       }
       _noteControllers[exerciseId] = controller;
     }
+  }
+
+  void _addSet(String exerciseId) {
+    setState(() {
+      _weightControllers[exerciseId]?.add(TextEditingController());
+      _repsControllers[exerciseId]?.add(TextEditingController());
+    });
+  }
+
+  void _deleteSet(String exerciseId, int index) {
+    setState(() {
+      if (_weightControllers[exerciseId]!.length > 1) {
+        _weightControllers[exerciseId]![index].dispose();
+        _weightControllers[exerciseId]!.removeAt(index);
+        _repsControllers[exerciseId]![index].dispose();
+        _repsControllers[exerciseId]!.removeAt(index);
+      }
+    });
   }
 
   @override
@@ -208,14 +235,17 @@ class _EditLogScreenState extends State<EditLogScreen> {
                 ),
                 const SizedBox(height: 20),
                 ...logs.map((logWithExercise) {
-                  _initializeControllers(logWithExercise.log.exerciseId, logWithExercise.log);
+                  final exerciseId = logWithExercise.log.exerciseId;
+                  _initializeControllers(exerciseId, logWithExercise.log);
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: ExerciseCard(
                       exerciseName: logWithExercise.exercise.name,
-                      weightControllers: _weightControllers[logWithExercise.log.exerciseId]!,
-                      repsControllers: _repsControllers[logWithExercise.log.exerciseId]!,
-                      noteController: _noteControllers[logWithExercise.log.exerciseId]!,
+                      weightControllers: _weightControllers[exerciseId]!,
+                      repsControllers: _repsControllers[exerciseId]!,
+                      noteController: _noteControllers[exerciseId]!,
+                      onAddSet: () => _addSet(exerciseId),
+                      onDeleteSet: (index) => _deleteSet(exerciseId, index),
                     ),
                   );
                 }),
@@ -237,7 +267,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
         final repsControllers = _repsControllers[exerciseId]!;
         final noteController = _noteControllers[exerciseId]!;
         
-        // Get the values from controllers
+        // Get the values from controllers (now dynamic length)
         final weights = weightControllers.map((controller) {
           final value = controller.text.trim();
           return value.isEmpty ? null : double.tryParse(value);

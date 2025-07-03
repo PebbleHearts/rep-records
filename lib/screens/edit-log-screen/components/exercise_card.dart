@@ -7,6 +7,8 @@ class ExerciseCard extends StatelessWidget {
   final List<TextEditingController> weightControllers;
   final List<TextEditingController> repsControllers;
   final TextEditingController noteController;
+  final VoidCallback onAddSet;
+  final Function(int) onDeleteSet;
 
   const ExerciseCard({
     super.key,
@@ -14,6 +16,8 @@ class ExerciseCard extends StatelessWidget {
     required this.weightControllers,
     required this.repsControllers,
     required this.noteController,
+    required this.onAddSet,
+    required this.onDeleteSet,
   });
 
   @override
@@ -41,7 +45,12 @@ class ExerciseCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ...List.generate(3, (index) => _buildSetRow(context, index)),
+            ...List.generate(
+              weightControllers.length,
+              (index) => _buildSetRow(context, index),
+            ),
+            const SizedBox(height: 12),
+            _buildAddSetButton(context),
             const SizedBox(height: 16),
             _buildNoteField(context),
           ],
@@ -118,7 +127,52 @@ class ExerciseCard extends StatelessWidget {
               style: TextStyle(color: theme.text),
             ),
           ),
+          const SizedBox(width: 8),
+          if (weightControllers.length > 1)
+            IconButton(
+              onPressed: () => onDeleteSet(index),
+              icon: Icon(
+                Icons.remove_circle_outline,
+                color: Colors.red.withOpacity(0.7),
+                size: 20,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 32,
+                minHeight: 32,
+              ),
+              padding: EdgeInsets.zero,
+            ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddSetButton(BuildContext context) {
+    final theme = Theme.of(context).extension<AppTheme>()!;
+
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onAddSet,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: theme.accent.withOpacity(0.3)),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        icon: Icon(
+          Icons.add,
+          color: theme.accent,
+          size: 18,
+        ),
+        label: Text(
+          'Add Set',
+          style: TextStyle(
+            color: theme.accent,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }

@@ -67,7 +67,7 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     required List<int?> reps,
     String? note,
   }) async {
-    final updatedSets = List.generate(3, (index) {
+    final updatedSets = List.generate(weights.length, (index) {
       return SetData(
         setNumber: index + 1,
         weight: weights[index] ?? 0,
@@ -110,8 +110,6 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
           setsData: ExerciseLogsSetData(
             sets: [
               SetData(setNumber: 1, reps: 0, weight: 0),
-              SetData(setNumber: 2, reps: 0, weight: 0),
-              SetData(setNumber: 3, reps: 0, weight: 0),
             ],
           ),
         ),
