@@ -7,6 +7,7 @@ import 'package:rep_records/database/database.dart';
 import 'package:rep_records/main.dart';
 import 'package:rep_records/screens/edit-log-screen/components/exercise_card.dart';
 import 'package:rep_records/theme/app_theme.dart';
+import 'package:intl/intl.dart';
 
 class EditLogScreen extends StatefulWidget {
   final String routineId;
@@ -72,6 +73,21 @@ class _EditLogScreenState extends State<EditLogScreen> {
           ),
         );
       }
+    }
+  }
+
+  String _formatDisplayDate(String date) {
+    // Convert from DD-MM-YYYY to "D MMM YYYY" format
+    try {
+      final parts = date.split('-');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      
+      final dateTime = DateTime(year, month, day);
+      return DateFormat('d MMM yyyy').format(dateTime);
+    } catch (e) {
+      return date; // Return original if parsing fails
     }
   }
 
@@ -146,8 +162,20 @@ class _EditLogScreenState extends State<EditLogScreen> {
 
   void _addSet(String exerciseId) {
     setState(() {
-      _weightControllers[exerciseId]?.add(TextEditingController());
-      _repsControllers[exerciseId]?.add(TextEditingController());
+      // Get the last set's values to prefill the new set
+      String lastWeight = '';
+      String lastReps = '';
+      
+      if (_weightControllers[exerciseId]?.isNotEmpty == true) {
+        lastWeight = _weightControllers[exerciseId]!.last.text;
+      }
+      if (_repsControllers[exerciseId]?.isNotEmpty == true) {
+        lastReps = _repsControllers[exerciseId]!.last.text;
+      }
+      
+      // Create new controllers with prefilled values
+      _weightControllers[exerciseId]?.add(TextEditingController(text: lastWeight));
+      _repsControllers[exerciseId]?.add(TextEditingController(text: lastReps));
     });
   }
 
@@ -170,7 +198,6 @@ class _EditLogScreenState extends State<EditLogScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         forceMaterialTransparency: true,
-        title: Text(widget.date),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _saveLogs,
@@ -209,6 +236,17 @@ class _EditLogScreenState extends State<EditLogScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Date title block
+                SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: Text(
+                      _formatDisplayDate(widget.date),
+                      style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                // Title input field
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6.0),
                   child: TextFormField(
