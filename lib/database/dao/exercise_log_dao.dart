@@ -103,15 +103,26 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
             .toList();
 
     for (final exercise in exercises) {
+      // Get the latest log for this exercise to use as prefill data
+      final latestLogQuery = select(exerciseLog)
+        ..where((t) => t.exerciseId.equals(exercise.exerciseId) & t.status.isNotValue('deleted'))
+        ..orderBy([(t) => OrderingTerm.desc(t.sessionDate)])
+        ..limit(1);
+
+      final latestLog = await latestLogQuery.getSingleOrNull();
+
+      // Use the latest log's sets data if available, otherwise use default
+      final setsData = latestLog?.setsData ?? ExerciseLogsSetData(
+        sets: [
+          SetData(setNumber: 1, reps: 0, weight: 0),
+        ],
+      );
+
       await into(exerciseLog).insert(
         ExerciseLogCompanion.insert(
           exerciseId: exercise.exerciseId,
           sessionDate: date,
-          setsData: ExerciseLogsSetData(
-            sets: [
-              SetData(setNumber: 1, reps: 0, weight: 0),
-            ],
-          ),
+          setsData: setsData,
         ),
       );
     }
