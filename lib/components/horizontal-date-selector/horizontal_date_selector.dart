@@ -7,10 +7,12 @@ import 'package:rep_records/util/debounce.dart';
 class HorizontalDateSelector extends StatefulWidget {
   final String selectedDate;
   final ValueSetter<DateTime> onDateTap;
+  final VoidCallback? onPeriodLabel;
   const HorizontalDateSelector({
     super.key,
     required this.selectedDate,
     required this.onDateTap,
+    this.onPeriodLabel,
   });
 
   @override
@@ -121,20 +123,43 @@ class _HorizontalDateSelectorState extends State<HorizontalDateSelector> {
       decoration: BoxDecoration(
         color: Theme.of(context).extension<AppTheme>()!.background3,
       ),
+      padding: const EdgeInsets.only(top: 5),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
+                onTap: widget.onPeriodLabel,
                 splashColor: Colors.deepPurple.withOpacity(0.2),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  child: Text(
-                    _yearMonthLabel,
-                    style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.bold),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.deepPurple.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _yearMonthLabel,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 16,
+                        color: Colors.deepPurple,
+                      ),
+                    ],
                   ),
                 ),
               ),

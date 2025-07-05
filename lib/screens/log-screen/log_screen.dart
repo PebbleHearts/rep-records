@@ -4,6 +4,7 @@ import 'package:rep_records/main.dart';
 import 'package:rep_records/screens/edit-log-screen/edit_log_screen.dart';
 import 'package:rep_records/screens/log-screen/components/log_item.dart';
 import 'package:rep_records/screens/log-screen/components/routine_selection_sheet.dart';
+import 'package:rep_records/screens/log-screen/components/calendar_selection_sheet.dart';
 import 'package:rep_records/theme/app_theme.dart';
 import 'package:rep_records/database/database.dart';
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
@@ -42,6 +43,29 @@ class _LogScreenState extends State<LogScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => RoutineSelectionSheet(selectedDate: _selectedDate),
+    );
+  }
+
+  Future<void> _showPeriodSelectionSheet(BuildContext context) async {
+    // Parse the current selected date string to DateTime
+    final parts = _selectedDate.split('-');
+    final day = int.parse(parts[0]);
+    final month = int.parse(parts[1]);
+    final year = int.parse(parts[2]);
+    final currentSelectedDate = DateTime(year, month, day);
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CalendarSelectionSheet(
+        initialSelectedDate: currentSelectedDate,
+        onDateSelected: (selectedDate) {
+          setState(() {
+            _selectedDate = _formatDate(selectedDate);
+          });
+        },
+      ),
     );
   }
 
@@ -202,6 +226,7 @@ class _LogScreenState extends State<LogScreen> {
                   _selectedDate = _formatDate(date);
                 });
               },
+              onPeriodLabel: () => _showPeriodSelectionSheet(context),
             )
           ],
         ),
