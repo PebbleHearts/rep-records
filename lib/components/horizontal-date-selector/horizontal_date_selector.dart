@@ -20,6 +20,7 @@ class HorizontalDateSelector extends StatefulWidget {
 }
 
 class _HorizontalDateSelectorState extends State<HorizontalDateSelector> {
+  bool _isInternalDateChange = false;
   final _debouncer = Debouncer(milliseconds: 100);
   final _scrollController = ScrollController();
   List<DateTime> _datesList = [];
@@ -91,12 +92,28 @@ class _HorizontalDateSelectorState extends State<HorizontalDateSelector> {
   void initState() {
     super.initState();
     _scrollController.addListener(_loadMore);
+    _initDateListAroundDate(DateTime.now());
+  }
+
+  @override
+  void didUpdateWidget(HorizontalDateSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedDate != oldWidget.selectedDate) {
+      print('didUpdateWidget: selectedDate changed');
+      if (!_isInternalDateChange) {
+        _initDateListAroundDate(DateTime.parse(widget.selectedDate));
+      }
+      _isInternalDateChange = false;
+    }
+  }
+
+  void _initDateListAroundDate(DateTime fromDate) {
     _datesList = getPrevious30Days(
-      fromDate: DateTime.now(),
+      fromDate: fromDate,
       includeFromDate: true,
     );
 
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       final pixels = _scrollController.position.pixels;
       final maxScrollExtent = _scrollController.position.maxScrollExtent;
       final viewportDimension = _scrollController.position.viewportDimension;
@@ -188,7 +205,10 @@ class _HorizontalDateSelectorState extends State<HorizontalDateSelector> {
                 return DateItem(
                   dateObject: _datesList[index],
                   selectedDate: widget.selectedDate,
-                  onDateTap: widget.onDateTap,
+                  onDateTap: (newDate) {
+                    widget.onDateTap(newDate);
+                      _isInternalDateChange = true;
+                  },
                 );
               },
             ),
