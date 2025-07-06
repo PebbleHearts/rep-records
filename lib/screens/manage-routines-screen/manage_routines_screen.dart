@@ -19,92 +19,95 @@ class ManageRoutinesScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).extension<AppTheme>()!.background,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).extension<AppTheme>()!.background,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    routineToEdit != null ? 'Edit Routine' : 'Add New Routine',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        if (routineToEdit != null) {
-                          await RoutineDao(database).updateRoutine(
-                            routineToEdit.id,
-                            RoutinesCompanion(
-                              name: Value(_nameController.text),
-                              status: Value(routineToEdit.status),
-                              synced: const Value(false),
-                            ),
-                          );
-                        } else {
-                          await RoutineDao(database).createRoutine(
-                            RoutinesCompanion.insert(
-                              name: _nameController.text,
-                              status: 'active',
-                            ),
-                          );
-                        }
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(
-                        fontSize: 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      routineToEdit != null ? 'Edit Routine' : 'Add New Routine',
+                      style: const TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Routine Name',
-                    hintText: 'e.g., Push Day, Upper Body, etc.',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a routine name';
-                    }
-                    return null;
-                  },
+                    TextButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          if (routineToEdit != null) {
+                            await RoutineDao(database).updateRoutine(
+                              routineToEdit.id,
+                              RoutinesCompanion(
+                                name: Value(_nameController.text),
+                                status: Value(routineToEdit.status),
+                                synced: const Value(false),
+                              ),
+                            );
+                          } else {
+                            await RoutineDao(database).createRoutine(
+                              RoutinesCompanion.insert(
+                                name: _nameController.text,
+                                status: 'active',
+                              ),
+                            );
+                          }
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Routine Name',
+                      hintText: 'e.g., Push Day, Upper Body, etc.',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a routine name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
