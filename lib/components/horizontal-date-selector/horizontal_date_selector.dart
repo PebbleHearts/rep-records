@@ -75,9 +75,15 @@ class _HorizontalDateSelectorState extends State<HorizontalDateSelector> {
           ..._datesList,
         ];
       });
-      _scrollController.jumpTo(
-        _initialMaxScrollExtent + viewportDimension - 0.5,
-      );
+      
+      // Wait for the widget to rebuild before jumping to the new position
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(
+            _initialMaxScrollExtent + viewportDimension - 0.5,
+          );
+        }
+      });
     }
   }
 
@@ -105,9 +111,15 @@ class _HorizontalDateSelectorState extends State<HorizontalDateSelector> {
           ..._datesList,
         ];
       });
-      _scrollController.jumpTo(
-        maxScrollExtent + viewportDimension - 0.5,
-      );
+      
+      // Wait for the widget to rebuild before jumping to the new position
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(
+            maxScrollExtent + viewportDimension - 0.5,
+          );
+        }
+      });
     });
   }
 
