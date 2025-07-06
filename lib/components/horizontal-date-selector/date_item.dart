@@ -16,11 +16,11 @@ class DateItem extends StatelessWidget {
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('EEE').format(dateObject);
     String formattedDay = DateFormat('d').format(dateObject);
-    String formattedDateString = DateFormat('dd-MM-yyyy').format(dateObject);
+    String formattedDateString = DateFormat('yyyy-MM-dd').format(dateObject);
     
     // Check if this date is today
     final today = DateTime.now();
-    final todayFormatted = DateFormat('dd-MM-yyyy').format(today);
+    final todayFormatted = DateFormat('yyyy-MM-dd').format(today);
     bool isToday = formattedDateString == todayFormatted;
 
     bool isDateSelected = formattedDateString == selectedDate;

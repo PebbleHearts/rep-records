@@ -49,9 +49,9 @@ class _LogScreenState extends State<LogScreen> {
   Future<void> _showPeriodSelectionSheet(BuildContext context) async {
     // Parse the current selected date string to DateTime
     final parts = _selectedDate.split('-');
-    final day = int.parse(parts[0]);
+    final year = int.parse(parts[0]);
     final month = int.parse(parts[1]);
-    final year = int.parse(parts[2]);
+    final day = int.parse(parts[2]);
     final currentSelectedDate = DateTime(year, month, day);
     
     showModalBottomSheet(
@@ -70,7 +70,7 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   LogExercise _convertToLogExercise(ExerciseLogWithExercise logWithExercise) {

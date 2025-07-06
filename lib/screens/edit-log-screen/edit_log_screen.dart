@@ -77,12 +77,12 @@ class _EditLogScreenState extends State<EditLogScreen> {
   }
 
   String _formatDisplayDate(String date) {
-    // Convert from DD-MM-YYYY to "D MMM YYYY" format
+    // Convert from YYYY-MM-DD to "D MMM YYYY" format
     try {
       final parts = date.split('-');
-      final day = int.parse(parts[0]);
+      final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
-      final year = int.parse(parts[2]);
+      final day = int.parse(parts[2]);
       
       final dateTime = DateTime(year, month, day);
       return DateFormat('d MMM yyyy').format(dateTime);
