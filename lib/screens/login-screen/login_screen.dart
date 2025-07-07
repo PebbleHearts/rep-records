@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           );
           // Navigate back to the previous screen after successful login
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
