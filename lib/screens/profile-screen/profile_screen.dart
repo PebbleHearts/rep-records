@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rep_records/providers/theme_provider.dart';
 import 'package:rep_records/screens/login-screen/login_screen.dart';
+import 'package:rep_records/services/downsync_service.dart';
 import 'package:rep_records/services/upload_service.dart';
 import 'package:rep_records/theme/app_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -112,8 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     try {
-      // TODO: Implement downsync logic - download data from server
-      await Future.delayed(const Duration(seconds: 2)); // Placeholder
+      await DownsyncService.downSync();
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
