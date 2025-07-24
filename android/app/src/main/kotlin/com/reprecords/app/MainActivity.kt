@@ -1,4 +1,4 @@
-package com.example.rep_records
+package com.reprecords.app
 
 import io.flutter.embedding.android.FlutterActivity
 
