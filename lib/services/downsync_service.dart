@@ -13,6 +13,50 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class DownsyncService {
   final supabase = Supabase.instance.client;
 
+  // Check if local exercise data exists
+  static Future<bool> hasLocalExerciseData() async {
+    try {
+      final exerciseDao = ExerciseDao(database);
+      final exercises = await exerciseDao.getAllExercises();
+      return exercises.isNotEmpty;
+    } catch (error) {
+      print('Error checking local exercise data: $error');
+      return false;
+    }
+  }
+
+  // Check if backup data exists on server
+  static Future<bool> hasServerBackupData() async {
+    try {
+      final response = await Supabase.instance.client.functions.invoke('checkhashistorydata');
+      
+      if (response.status == 200) {
+        final data = response.data as Map<String, dynamic>?;
+        return data?['hasHistoryData'] as bool? ?? false;
+      } else {
+        print('Error checking history data: ${response.data}');
+        return false;
+      }
+    } catch (error) {
+      print('Error calling checkhashistorydata: $error');
+      return false;
+    }
+  }
+
+  // Check if backup restore should be offered to user
+  static Future<bool> shouldOfferBackupRestore() async {
+    try {
+      final hasLocalData = await hasLocalExerciseData();
+      final hasBackupData = await hasServerBackupData();
+      
+      // Only offer backup restore if there's backup data AND no local exercise data
+      return hasBackupData && !hasLocalData;
+    } catch (error) {
+      print('Error checking backup restore conditions: $error');
+      return false;
+    }
+  }
+
   static Future<void> downSyncCategories() async {
     try {
       // Call the downsync function on the server to get categories

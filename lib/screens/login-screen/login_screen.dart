@@ -103,7 +103,8 @@ class _LoginScreenState extends State<LoginScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          // Navigate back to the previous screen after successful login
+          
+          // Navigate back immediately
           Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

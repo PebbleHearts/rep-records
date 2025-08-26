@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rep_records/components/sync-down-bottom-sheetd/sync_down_bottom_sheet.dart';
 import 'package:rep_records/screens/login-screen/login_screen.dart';
 import 'package:rep_records/navigators/tab-navigator/tab_navigator.dart';
+import 'package:rep_records/services/downsync_service.dart';
 import 'package:rep_records/theme/app_theme.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -26,7 +28,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const TabNavigator()),
+          MaterialPageRoute(builder: (context) => const TabNavigator(isLoggedInNow: true)),
         );
       }
     } catch (error) {
@@ -58,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
 
-      // If login was successful, complete onboarding
+      // If login was successful, complete onboarding and check for backup
       if (result == true) {
         await _completeOnboarding();
       }

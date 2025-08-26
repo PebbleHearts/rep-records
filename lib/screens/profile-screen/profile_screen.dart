@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rep_records/components/sync-down-bottom-sheetd/sync_down_bottom_sheet.dart';
 import 'package:rep_records/providers/theme_provider.dart';
 import 'package:rep_records/screens/login-screen/login_screen.dart';
 import 'package:rep_records/services/downsync_service.dart';
@@ -141,16 +142,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _handleAuthAction() {
+  Future<void> _checkAndShowBackupDialog() async {
+    // Wait a moment for navigation to complete
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (!mounted) return;
+    
+    try {
+      final shouldOfferRestore = await DownsyncService.shouldOfferBackupRestore();
+      
+      if (shouldOfferRestore && mounted) {
+        _showBackupRestoreDialog();
+      }
+    } catch (error) {
+      print('Error checking backup data: $error');
+    }
+  }
+
+  void _showBackupRestoreDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const SyncDownBottomSheet(),
+    );
+  }
+
+  Future<void> _handleAuthAction() async {
     if (_user != null) {
       // User is logged in, handle logout
-      _handleLogout();
+      await _handleLogout();
     } else {
       // User is logged out, navigate to login screen
-      Navigator.push(
+      final result = await Navigator.push(
         context, 
         MaterialPageRoute(builder: (context) => const LoginScreen())
       );
+      
+      // If login was successful, check for backup restore
+      if (result == true) {
+        _checkAndShowBackupDialog();
+      }
     }
   }
 
