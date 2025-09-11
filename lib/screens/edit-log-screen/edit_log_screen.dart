@@ -195,6 +195,54 @@ class _EditLogScreenState extends State<EditLogScreen> {
     });
   }
 
+  Future<void> _deleteExercise(String logId, String exerciseId) async {
+    try {
+      // Delete from database
+      await _exerciseLogDao.deleteExerciseLog(logId);
+      
+      // Clean up controllers for this exercise
+      _cleanupControllers(exerciseId);
+      
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Exercise deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting exercise: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _cleanupControllers(String exerciseId) {
+    // Dispose and remove controllers for this exercise
+    if (_weightControllers.containsKey(exerciseId)) {
+      for (final controller in _weightControllers[exerciseId]!) {
+        controller.dispose();
+      }
+      _weightControllers.remove(exerciseId);
+    }
+    
+    if (_repsControllers.containsKey(exerciseId)) {
+      for (final controller in _repsControllers[exerciseId]!) {
+        controller.dispose();
+      }
+      _repsControllers.remove(exerciseId);
+    }
+    
+    if (_noteControllers.containsKey(exerciseId)) {
+      _noteControllers[exerciseId]!.dispose();
+      _noteControllers.remove(exerciseId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<AppTheme>()!;
@@ -289,6 +337,7 @@ class _EditLogScreenState extends State<EditLogScreen> {
                       noteController: _noteControllers[exerciseId]!,
                       onAddSet: () => _addSet(exerciseId),
                       onDeleteSet: (index) => _deleteSet(exerciseId, index),
+                      onDeleteExercise: () => _deleteExercise(logWithExercise.log.id, exerciseId),
                     ),
                   );
                 }),

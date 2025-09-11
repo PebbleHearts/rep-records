@@ -9,6 +9,7 @@ class ExerciseCard extends StatelessWidget {
   final TextEditingController noteController;
   final VoidCallback onAddSet;
   final Function(int) onDeleteSet;
+  final VoidCallback onDeleteExercise;
 
   const ExerciseCard({
     super.key,
@@ -18,6 +19,7 @@ class ExerciseCard extends StatelessWidget {
     required this.noteController,
     required this.onAddSet,
     required this.onDeleteSet,
+    required this.onDeleteExercise,
   });
 
   @override
@@ -36,13 +38,33 @@ class ExerciseCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              exerciseName,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: theme.text,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    exerciseName,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: theme.text,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _showDeleteDialog(context),
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: Colors.red.withOpacity(0.7),
+                    size: 20,
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             ...List.generate(
@@ -199,6 +221,46 @@ class ExerciseCard extends StatelessWidget {
         color: theme.text,
         fontStyle: FontStyle.italic,
       ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    final theme = Theme.of(context).extension<AppTheme>()!;
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: theme.background2,
+          title: Text(
+            'Delete Exercise',
+            style: TextStyle(color: theme.text),
+          ),
+          content: Text(
+            'Are you sure you want to delete "$exerciseName" from this workout? This action cannot be undone.',
+            style: TextStyle(color: theme.text.withOpacity(0.8)),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: theme.text.withOpacity(0.6)),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onDeleteExercise();
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 } 
