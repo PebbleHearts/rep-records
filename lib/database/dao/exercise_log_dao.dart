@@ -128,6 +128,37 @@ class ExerciseLogDao extends DatabaseAccessor<AppDatabase>
     }
   }
 
+  Future<void> createLogForExercise(String exerciseId, String date) async {
+    // Get the latest log for this exercise to use as prefill data
+    final latestLogQuery = select(exerciseLog)
+      ..where((t) => t.exerciseId.equals(exerciseId) & t.status.isNotValue('deleted'))
+      ..orderBy([(t) => OrderingTerm.desc(t.sessionDate)])
+      ..limit(1);
+
+    final latestLog = await latestLogQuery.getSingleOrNull();
+
+    // Use the latest log's sets data if available, otherwise use default
+    final setsData = latestLog?.setsData ?? ExerciseLogsSetData(
+      sets: [
+        SetData(setNumber: 1, reps: 0, weight: 0),
+      ],
+    );
+
+    await into(exerciseLog).insert(
+      ExerciseLogCompanion.insert(
+        exerciseId: exerciseId,
+        sessionDate: date,
+        setsData: setsData,
+      ),
+    );
+  }
+
+  Future<void> createLogsForExercises(List<String> exerciseIds, String date) async {
+    for (final exerciseId in exerciseIds) {
+      await createLogForExercise(exerciseId, date);
+    }
+  }
+
   Future<void> updateSynced(List<String> exerciseLogIds) async {
     await (update(exerciseLog)..where((t) => t.id.isIn(exerciseLogIds))).write(ExerciseLogCompanion(synced: const Value(true)));
   }

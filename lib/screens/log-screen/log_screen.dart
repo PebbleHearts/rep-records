@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rep_records/components/horizontal-date-selector/horizontal_date_selector.dart';
 import 'package:rep_records/main.dart';
 import 'package:rep_records/screens/edit-log-screen/edit_log_screen.dart';
+import 'package:rep_records/screens/exercise-selection-screen/exercise_selection_screen.dart';
 import 'package:rep_records/screens/log-screen/components/log_item.dart';
 import 'package:rep_records/screens/log-screen/components/routine_selection_sheet.dart';
 import 'package:rep_records/screens/log-screen/components/calendar_selection_sheet.dart';
@@ -172,7 +173,14 @@ class _LogScreenState extends State<LogScreen> {
                                 const SizedBox(height: 40),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // TODO: Implement start random exercise
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ExerciseSelectionScreen(
+                                          selectedDate: _selectedDate,
+                                        ),
+                                      ),
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: const Size(double.infinity, 50),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:rep_records/database/dao/exercise_log_dao.dart';
 import 'package:rep_records/database/dao/log_day_details_dao.dart';
-import 'package:rep_records/database/dao/routine_dao.dart';
 import 'package:rep_records/database/database.dart';
 import 'package:rep_records/main.dart';
 import 'package:rep_records/screens/edit-log-screen/components/exercise_card.dart';
@@ -13,12 +12,14 @@ class EditLogScreen extends StatefulWidget {
   final String routineId;
   final String date;
   final String? routineName;
+  final List<String>? selectedExerciseIds;
 
   const EditLogScreen({
     super.key,
     required this.routineId,
     required this.date,
     this.routineName,
+    this.selectedExerciseIds,
   });
 
   @override
@@ -41,6 +42,10 @@ class _EditLogScreenState extends State<EditLogScreen> {
       // Create logs for the routine
       print('Creating logs for routine ${widget.routineId} on date ${widget.date}');
       _exerciseLogDao.createLogsForRoutine(widget.routineId, widget.date);
+    } else if (widget.selectedExerciseIds != null && widget.selectedExerciseIds!.isNotEmpty) {
+      // Create logs for the selected exercises
+      print('Creating logs for ${widget.selectedExerciseIds!.length} exercises on date ${widget.date}');
+      _exerciseLogDao.createLogsForExercises(widget.selectedExerciseIds!, widget.date);
     }
     _loadLogs();
     _loadLogDayDetails();
